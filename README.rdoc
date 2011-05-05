@@ -1,0 +1,81 @@
+= Traceroute
+
+A Rake task that helps you find the dead routes and actions for your Rails 3 app
+
+
+== Features
+
+This Rake task investigates your Rails 3 application's routes definition, then tells you unused routes and unreachable action methods.
+
+
+== Supported versions
+
+* Ruby 1.8.7, 1.9.2, 1.9.3 (trunk)
+
+* Rails 3.0.x, 3.1 (edge)
+
+
+== Install
+
+Put this line in your Gemfile:
+  gem 'traceroute'
+
+Then bundle:
+  % bundle
+
+
+== Usage
+
+Just run the following command in your Rails app directory.
+  % rake traceroute
+
+
+== What's gonna happen then?
+
+Consider you have the following routes.rb and a controller:
+
+  # config/routes.rb
+  YourRailsApp::Application.routes.draw do
+    resources :users, :only => [:index, :show, :new, :create]
+    match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
+  end
+
+  # app/controllers/users_controller.rb
+  class UsersController < ApplicationController
+    def index
+      @users = User.page(params[:page])
+    end
+
+    def index2
+    end
+
+    def show
+      @user = User.find(params[:id])
+    end
+  end
+
+Running the Rake task will print something like this for you:
+
+  Unused routes:
+    users#create
+    users#new
+    catalog#purchase
+  Unreachable action methods:
+    users#index2
+
+OMG super helpful, isn't it?
+
+
+== Questions, Feedback
+
+Feel free to message me on Github (amatsuda) or Twitter (@a_matsuda)  ☇3☇3☇3
+
+
+== Contributing to Traceroute
+
+* Fork, fix, then send me a pull request.
+
+
+== Copyright
+
+Copyright (c) 2011 Akira Matsuda. See LICENSE.txt for further details.
