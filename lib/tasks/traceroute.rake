@@ -11,7 +11,11 @@ task :traceroute => :environment do
   }.flatten
 
   routed_actions = routes.map do |r|
-    "#{r.requirements[:controller]}##{r.requirements[:action]}"
+    if r.requirements[:controller].blank? && r.requirements[:action].blank? && (r.path == '/:controller(/:action(/:id(.:format)))')
+      %Q["#{r.path}"  This is a legacy wild controller route that's not recommended for RESTful applications.]
+    else
+      "#{r.requirements[:controller]}##{r.requirements[:action]}"
+    end
   end
 
   puts 'Unused routes:'
