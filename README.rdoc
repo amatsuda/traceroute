@@ -66,6 +66,15 @@ Running the Rake task will print something like this for you:
 OMG super helpful, isn't it?
 
 
+== FAQ
+
+Q: It makes a fuss over the default route at the very bottom.
+A: Please do not use that. Did you read the comment in your routes.rb? Actually this task will help you a lot to remove that evil route.
+
+Q: "command not found: traceroute" Did you mean: tracert
+A: I'm afraid you're using the wrong operating system.
+
+
 == Questions, Feedback
 
 Feel free to message me on Github (amatsuda) or Twitter (@a_matsuda)  ☇3☇3☇3
