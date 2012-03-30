@@ -10,9 +10,9 @@ This Rake task investigates your Rails 3 application's routes definition, then t
 
 == Supported versions
 
-* Ruby 1.8.7, 1.9.2, 1.9.3 (trunk)
+* Ruby 1.8.7, 1.9.2, 1.9.3, 2.0 (trunk)
 
-* Rails 3.0.x, 3.1 (edge)
+* Rails 3.0.x, 3.1.x, 3.2.x, 4.0 (edge)
 
 
 == Install
@@ -82,7 +82,7 @@ Feel free to message me on Github (amatsuda) or Twitter (@a_matsuda)  ☇3☇3�
 
 == Contributing to Traceroute
 
-* Fork, fix, then send me a pull request.
+* Fork, patch, then send me a pull request.
 
 
 == Copyright
