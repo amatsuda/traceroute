@@ -2,10 +2,16 @@ desc 'Prints out unused routes and unreachable action methods'
 task :traceroute => :environment do
   Rails.application.eager_load!
   Rails.application.reload_routes!
-  routes = if defined? Journey::Route
-    Rails.application.routes.routes.reject {|r| r.path.spec.to_s =~ %r{/rails/info/properties|^#{Rails.application.config.assets.prefix}} }.reject {|r| r.name.nil? && r.requirements.blank?}
-  else
-    Rails.application.routes.routes.reject {|r| r.path =~ %r{/rails/info/properties|^#{Rails.application.config.assets.prefix}}}.reject {|r| r.name.nil? && r.requirements.blank?}
+
+  routes = Rails.application.routes.routes.reject {|r| r.name.nil? && r.requirements.blank?}
+
+  if Rails.application.config.respond_to?(:assets)
+    exclusion_regexp = %r{/rails/info/properties|^#{Rails.application.config.assets.prefix}}
+
+    routes.reject! do |route|
+      path = defined?(Journey::Route) ? route.path.spec.to_s : route.path
+      path =~ exclusion_regexp
+    end
   end
 
   defined_action_methods = ApplicationController.descendants.map {|controller|
