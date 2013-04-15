@@ -9,7 +9,7 @@ task :traceroute => :environment do
     exclusion_regexp = %r{/rails/info/properties|^#{Rails.application.config.assets.prefix}}
 
     routes.reject! do |route|
-      path = defined?(Journey::Route) ? route.path.spec.to_s : route.path
+      path = (defined?(ActionDispatch::Journey::Route) || defined?(Journey::Route)) ? route.path.spec.to_s : route.path
       path =~ exclusion_regexp
     end
   end
