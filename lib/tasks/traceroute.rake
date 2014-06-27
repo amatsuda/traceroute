@@ -14,7 +14,7 @@ task :traceroute => :environment do
     end
   end
 
-  defined_action_methods = ApplicationController.descendants.map {|controller|
+  defined_action_methods = ActionController::Base.descendants.map {|controller|
     controller.action_methods.reject {|a| (a =~ /\A(_conditional)?_callback_/) || (a == '_layout_from_proc')}.map do |action|
       "#{controller.controller_path}##{action}"
     end
