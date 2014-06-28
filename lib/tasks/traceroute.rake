@@ -14,11 +14,11 @@ task :traceroute => :environment do
     end
   end
 
-  defined_action_methods = ActionController::Base.descendants.map {|controller|
+  defined_action_methods = ActionController::Base.descendants.map do |controller|
     controller.action_methods.reject {|a| (a =~ /\A(_conditional)?_callback_/) || (a == '_layout_from_proc')}.map do |action|
       "#{controller.controller_path}##{action}"
     end
-  }.flatten
+  end.flatten
 
   routed_actions = routes.map do |r|
     if r.requirements[:controller].blank? && r.requirements[:action].blank? && (r.path == '/:controller(/:action(/:id(.:format)))')
@@ -28,8 +28,11 @@ task :traceroute => :environment do
     end
   end
 
-  puts 'Unused routes:'
-  (routed_actions - defined_action_methods).each {|a| puts "  #{a}"}
-  puts 'Unreachable action methods:'
-  (defined_action_methods - routed_actions).each {|a| puts "  #{a}"}
+  unused_routes = routed_actions - defined_action_methods
+  unreachable_action_methods = defined_action_methods - routed_actions
+
+  puts "Unused routes (#{unused_routes.count}):"
+  unused_routes.each {|route| puts "  #{route}"}
+  puts "Unreachable action methods (#{unreachable_action_methods.count}):"
+  unreachable_action_methods.each {|action| puts "  #{action}"}
 end
