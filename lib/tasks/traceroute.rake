@@ -1,12 +1,13 @@
 desc 'Prints out unused routes and unreachable action methods'
 task :traceroute => :environment do
   Rails.application.eager_load!
+  ::Rails::InfoController rescue NameError
   Rails.application.reload_routes!
 
   routes = Rails.application.routes.routes.reject {|r| r.name.nil? && r.requirements.blank?}
 
   if Rails.application.config.respond_to?(:assets)
-    exclusion_regexp = %r{/rails/info/properties|^#{Rails.application.config.assets.prefix}}
+    exclusion_regexp = %r{^#{Rails.application.config.assets.prefix}}
 
     routes.reject! do |route|
       path = (defined?(ActionDispatch::Journey::Route) || defined?(Journey::Route)) ? route.path.spec.to_s : route.path
