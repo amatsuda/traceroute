@@ -1,12 +1,6 @@
 desc 'Prints out unused routes and unreachable action methods'
 task :traceroute => :environment do
-  Rails.application.eager_load!
-  ::Rails::InfoController rescue NameError
-  ::Rails::WelcomeController rescue NameError
-  ::Rails::MailersController rescue NameError
-  Rails.application.reload_routes!
-
-  Rails::Engine.subclasses.each(&:eager_load!)
+  Traceroute.load_everything!
 
   routes = Rails.application.routes.routes.reject {|r| r.name.nil? && r.requirements.blank?}
 
