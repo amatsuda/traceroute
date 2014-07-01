@@ -6,6 +6,8 @@ task :traceroute => :environment do
   ::Rails::MailersController rescue NameError
   Rails.application.reload_routes!
 
+  Rails::Engine.subclasses.each(&:eager_load!)
+
   routes = Rails.application.routes.routes.reject {|r| r.name.nil? && r.requirements.blank?}
 
   if Rails.application.config.respond_to?(:assets)
