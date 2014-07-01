@@ -10,6 +10,8 @@ task :traceroute => :environment do
 
   routes = Rails.application.routes.routes.reject {|r| r.name.nil? && r.requirements.blank?}
 
+  routes.reject! {|r| r.app.is_a?(ActionDispatch::Routing::Mapper::Constraints) && r.app.app.respond_to?(:call)}
+
   if Rails.application.config.respond_to?(:assets)
     exclusion_regexp = %r{^#{Rails.application.config.assets.prefix}}
 
