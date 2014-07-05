@@ -6,13 +6,7 @@ task :traceroute => :environment do
 
   defined_action_methods = Traceroute.defined_action_methods
 
-  routed_actions = routes.map do |r|
-    if r.requirements[:controller].blank? && r.requirements[:action].blank? && (r.path == '/:controller(/:action(/:id(.:format)))')
-      %Q["#{r.path}"  This is a legacy wild controller route that's not recommended for RESTful applications.]
-    else
-      "#{r.requirements[:controller]}##{r.requirements[:action]}"
-    end
-  end
+  routed_actions = Traceroute.routed_actions
 
   unused_routes = routed_actions - defined_action_methods
   unreachable_action_methods = defined_action_methods - routed_actions
