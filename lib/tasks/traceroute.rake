@@ -2,18 +2,7 @@ desc 'Prints out unused routes and unreachable action methods'
 task :traceroute => :environment do
   Traceroute.load_everything!
 
-  routes = Rails.application.routes.routes.reject {|r| r.name.nil? && r.requirements.blank?}
-
-  routes.reject! {|r| r.app.is_a?(ActionDispatch::Routing::Mapper::Constraints) && r.app.app.respond_to?(:call)}
-
-  if Rails.application.config.respond_to?(:assets)
-    exclusion_regexp = %r{^#{Rails.application.config.assets.prefix}}
-
-    routes.reject! do |route|
-      path = (defined?(ActionDispatch::Journey::Route) || defined?(Journey::Route)) ? route.path.spec.to_s : route.path
-      path =~ exclusion_regexp
-    end
-  end
+  routes = Traceroute.routes
 
   defined_action_methods = ActionController::Base.descendants.map do |controller|
     controller.action_methods.reject {|a| (a =~ /\A(_conditional)?_callback_/) || (a == '_layout_from_proc')}.map do |action|
