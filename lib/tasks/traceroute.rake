@@ -2,8 +2,6 @@ desc 'Prints out unused routes and unreachable action methods'
 task :traceroute => :environment do
   Traceroute.load_everything!
 
-  routes = Traceroute.routes
-
   defined_action_methods = Traceroute.defined_action_methods
 
   routed_actions = Traceroute.routed_actions
