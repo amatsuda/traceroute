@@ -4,11 +4,7 @@ task :traceroute => :environment do
 
   routes = Traceroute.routes
 
-  defined_action_methods = ActionController::Base.descendants.map do |controller|
-    controller.action_methods.reject {|a| (a =~ /\A(_conditional)?_callback_/) || (a == '_layout_from_proc')}.map do |action|
-      "#{controller.controller_path}##{action}"
-    end
-  end.flatten
+  defined_action_methods = Traceroute.defined_action_methods
 
   routed_actions = routes.map do |r|
     if r.requirements[:controller].blank? && r.requirements[:action].blank? && (r.path == '/:controller(/:action(/:id(.:format)))')
