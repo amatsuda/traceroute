@@ -1,4 +1,5 @@
 module Traceroute
+  VERSION = Gem.loaded_specs['traceroute'].version.to_s
   class Railtie < ::Rails::Railtie
     rake_tasks do
       load File.join(File.dirname(__FILE__), 'tasks/traceroute.rake')
