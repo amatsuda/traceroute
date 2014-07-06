@@ -6,23 +6,27 @@ class Traceroute
     end
   end
 
+  def initialize(app)
+    @app = app
+  end
+
   def load_everything!
-    Rails.application.eager_load!
+    @app.eager_load!
     ::Rails::InfoController rescue NameError
     ::Rails::WelcomeController rescue NameError
     ::Rails::MailersController rescue NameError
-    Rails.application.reload_routes!
+    @app.reload_routes!
 
     Rails::Engine.subclasses.each(&:eager_load!)
   end
 
   def routes
-    routes = Rails.application.routes.routes.reject {|r| r.name.nil? && r.requirements.blank?}
+    routes = @app.routes.routes.reject {|r| r.name.nil? && r.requirements.blank?}
 
     routes.reject! {|r| r.app.is_a?(ActionDispatch::Routing::Mapper::Constraints) && r.app.app.respond_to?(:call)}
 
-    if Rails.application.config.respond_to?(:assets)
-      exclusion_regexp = %r{^#{Rails.application.config.assets.prefix}}
+    if @app.config.respond_to?(:assets)
+      exclusion_regexp = %r{^#{@app.config.assets.prefix}}
 
       routes.reject! do |route|
         path = (defined?(ActionDispatch::Journey::Route) || defined?(Journey::Route)) ? route.path.spec.to_s : route.path

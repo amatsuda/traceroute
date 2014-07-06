@@ -1,6 +1,6 @@
 desc 'Prints out unused routes and unreachable action methods'
 task :traceroute => :environment do
-  traceroute = Traceroute.new
+  traceroute = Traceroute.new Rails.application
   traceroute.load_everything!
 
   defined_action_methods = traceroute.defined_action_methods
