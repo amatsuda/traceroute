@@ -1,0 +1,16 @@
+require 'rails'
+require 'action_controller/railtie'
+
+require 'traceroute'
+
+module DummyApp
+  class Application < Rails::Application
+    config.root = File.expand_path('..', __FILE__)
+    config.eager_load = false
+    config.secret_key_base = '1234567890'
+  end
+end
+
+class ApplicationController < ActionController::Base; end
+
+DummyApp::Application.initialize!
