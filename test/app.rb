@@ -19,4 +19,9 @@ class UsersController < ApplicationController
   def show; end
 end
 
+module Admin; class ShopsController < ApplicationController
+  def index; end
+  def create; end
+end; end
+
 DummyApp::Application.initialize!
