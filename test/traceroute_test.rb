@@ -14,3 +14,20 @@ class TracerouteTest < Minitest::Test
     assert_empty @traceroute.routed_actions
   end
 end
+
+class RoutedActionsTest < Minitest::Test
+  def setup
+    DummyApp::Application.routes.draw do
+      resources :users, :only => [:index, :show, :new, :create]
+    end
+    @traceroute = Traceroute.new Rails.application
+  end
+
+  def teardown
+    DummyApp::Application.routes.clear!
+  end
+
+  def test_routed_actions
+    assert_equal ['users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.reject {|r| r.start_with? 'rails/'}.sort
+  end
+end
