@@ -19,6 +19,10 @@ class RoutedActionsTest < Minitest::Test
   def setup
     DummyApp::Application.routes.draw do
       resources :users, :only => [:index, :show, :new, :create]
+
+      namespace :admin do
+        resources :shops, :only => :index
+      end
     end
     @traceroute = Traceroute.new Rails.application
   end
@@ -28,6 +32,6 @@ class RoutedActionsTest < Minitest::Test
   end
 
   def test_routed_actions
-    assert_equal ['users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.reject {|r| r.start_with? 'rails/'}.sort
+    assert_equal ['admin/shops#index', 'users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.reject {|r| r.start_with? 'rails/'}.sort
   end
 end
