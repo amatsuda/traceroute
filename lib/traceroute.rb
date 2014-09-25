@@ -6,6 +6,12 @@ class Traceroute
     end
   end
 
+  RoutedAction = Struct.new(:verb, :controller, :action, :error) do
+    def controller_action_string
+      "#{controller}##{action}"
+    end
+  end
+
   def initialize(app)
     @app = app
   end
@@ -31,9 +37,10 @@ class Traceroute
   def routed_actions
     routes.map do |r|
       if r.requirements[:controller].blank? && r.requirements[:action].blank? && (r.path == '/:controller(/:action(/:id(.:format)))')
-        %Q["#{r.path}"  This is a legacy wild controller route that's not recommended for RESTful applications.]
+        RoutedAction.new nil, nil, nil, %Q["#{r.path}"  This is a legacy wild controller route that's not recommended for RESTful applications.]
       else
-        "#{r.requirements[:controller]}##{r.requirements[:action]}"
+        verb_string = r.verb.source.match(/[A-Z]+/)[0] + " " rescue ""
+        RoutedAction.new verb_string, r.requirements[:controller], r.requirements[:action]
       end
     end
   end

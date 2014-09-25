@@ -32,6 +32,6 @@ class RoutedActionsTest < Minitest::Test
   end
 
   def test_routed_actions
-    assert_equal ['admin/shops#index', 'users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.reject {|r| r.start_with? 'rails/'}.sort
+    assert_equal ['admin/shops#index', 'users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.reject {|r| r.controller_action_string.start_with? 'rails/'}.map(&:controller_action_string).sort
   end
 end
