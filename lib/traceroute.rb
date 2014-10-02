@@ -1,9 +1,33 @@
+module OnlyChecker
+  def resources(*resources, &block)
+    tmp_options = resources.dup.extract_options!
+    resource_name = resources[0].to_s
+    flattened_only_options = tmp_options[:only].nil? ? nil : [tmp_options[:only]].flatten.sort
+    if flattened_only_options
+      if flattened_only_options == [:create, :destroy, :edit, :index, :new, :show, :update]
+        (Traceroute.dsl_warnings << "The :only option on the :#{resource_name} resource is unnecessary; it contains the default action set of [:new, :create, :index, :show, :edit, :update, :destroy]").uniq!
+      elsif flattened_only_options == []
+        (Traceroute.dsl_warnings << "Consider replacing the ':only => []' option on the :#{resource_name} resource with ':only => :none'").uniq!
+      end
+    end
+    super
+  end
+end
+
+class ActionDispatch::Routing::Mapper
+  include OnlyChecker
+end
+
 class Traceroute
   VERSION = Gem.loaded_specs['traceroute'].version.to_s
   class Railtie < ::Rails::Railtie
     rake_tasks do
       load File.join(File.dirname(__FILE__), 'tasks/traceroute.rake')
     end
+  end
+
+  def self.dsl_warnings
+    @dsl_warnings ||= []
   end
 
   def initialize(app)
