@@ -1,6 +1,6 @@
 = Traceroute
 
-A Rake task that helps you find dead routes and unused actions in your Rails 3/4 app.
+A Rake task that helps you find dead routes and unused actions in your Rails 3+ app.
 
 
 == Features
