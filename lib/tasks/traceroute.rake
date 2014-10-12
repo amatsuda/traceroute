@@ -14,4 +14,10 @@ task :traceroute => :environment do
   unused_routes.each {|route| puts "  #{route}"}
   puts "Unreachable action methods (#{unreachable_action_methods.count}):"
   unreachable_action_methods.each {|action| puts "  #{action}"}
+  if Traceroute.dsl_warnings.any?
+    puts "DSL warnings"
+    Traceroute.dsl_warnings.each do |warning|
+      puts warning
+    end
+  end
 end
