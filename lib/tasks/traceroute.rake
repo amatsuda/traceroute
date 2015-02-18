@@ -14,4 +14,8 @@ task :traceroute => :environment do
   unused_routes.each {|route| puts "  #{route}"}
   puts "Unreachable action methods (#{unreachable_action_methods.count}):"
   unreachable_action_methods.each {|action| puts "  #{action}"}
+
+  unless unused_routes.empty? && unreachable_action_methods.empty?
+    fail "Unused routes or unreachable action methods detected."
+  end
 end

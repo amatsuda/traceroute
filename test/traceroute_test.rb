@@ -35,3 +35,55 @@ class RoutedActionsTest < Minitest::Test
     assert_equal ['admin/shops#index', 'users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.reject {|r| r.start_with? 'rails/'}.sort
   end
 end
+
+class TracerouteRakeTests < Minitest::Test
+  def setup
+    require 'rake'
+    load "./lib/tasks/traceroute.rake"
+  end
+
+  def test_rake_task_fails_when_unreachable_action_method_detected
+    traceroute = Traceroute.new Rails.application
+    traceroute.load_everything!
+
+    begin
+      Rake::Task[:traceroute].execute
+    rescue => e
+      assert_equal e.message.include?("Unused routes or unreachable action methods detected."), true
+    end
+  end
+
+  def test_rake_task_fails_when_unused_route_detected
+    DummyApp::Application.routes.draw do
+      resources :users, :only => [:index, :show, :new, :create] do
+        member do
+          get :index2
+        end
+      end
+
+      namespace :admin do
+        resources :shops, :only => [:index, :create]
+      end
+
+      namespace :rails do
+        resources :mailers, only: ["index"] do
+          member do
+            get :preview
+          end
+        end
+      end
+    end
+
+    traceroute = Traceroute.new Rails.application
+
+    begin
+      Rake::Task[:traceroute].execute
+    rescue => e
+      assert_equal e.message.include?("Unused routes or unreachable action methods detected."), true
+    end
+  end
+
+  def teardown
+    Rake::Task.clear
+  end
+end
