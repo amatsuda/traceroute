@@ -7,7 +7,7 @@ class TracerouteTest < Minitest::Test
   end
 
   def test_defined_action_methods
-    assert_equal ['users#index', 'users#index2', 'users#show', 'admin/shops#index', 'admin/shops#create'], @traceroute.defined_action_methods.reject {|r| r.start_with? 'rails/'}
+    assert_equal ['users#index', 'users#index2', 'users#show', 'admin/shops#index', 'admin/shops#create'], @traceroute.defined_action_methods
   end
 
   def test_routed_actions
@@ -32,7 +32,7 @@ class RoutedActionsTest < Minitest::Test
   end
 
   def test_routed_actions
-    assert_equal ['admin/shops#index', 'users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.reject {|r| r.start_with? 'rails/'}.sort
+    assert_equal ['admin/shops#index', 'users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.sort
   end
 end
 
