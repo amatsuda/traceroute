@@ -42,14 +42,23 @@ class TracerouteRakeTests < Minitest::Test
     load "./lib/tasks/traceroute.rake"
   end
 
+  def test_dont_fail_when_envvar_not_set
+    traceroute = Traceroute.new Rails.application
+    traceroute.load_everything!
+
+    ENV['FAIL_ON_ERROR']=""
+    Rake::Task[:traceroute].execute
+  end
+
   def test_rake_task_fails_when_unreachable_action_method_detected
     traceroute = Traceroute.new Rails.application
     traceroute.load_everything!
 
     begin
+      ENV['FAIL_ON_ERROR']="1"
       Rake::Task[:traceroute].execute
     rescue => e
-      assert_equal e.message.include?("Unused routes or unreachable action methods detected."), true
+      assert_equal true, e.message.include?("Unused routes or unreachable action methods detected.")
     end
   end
 
@@ -77,13 +86,15 @@ class TracerouteRakeTests < Minitest::Test
     traceroute = Traceroute.new Rails.application
 
     begin
+      ENV['FAIL_ON_ERROR']="1"
       Rake::Task[:traceroute].execute
     rescue => e
-      assert_equal e.message.include?("Unused routes or unreachable action methods detected."), true
+      assert_equal true, e.message.include?("Unused routes or unreachable action methods detected.")
     end
   end
 
   def teardown
     Rake::Task.clear
+    DummyApp::Application.routes.clear!
   end
 end
