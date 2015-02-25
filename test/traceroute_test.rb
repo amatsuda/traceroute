@@ -46,7 +46,7 @@ class TracerouteRakeTests < Minitest::Test
     traceroute = Traceroute.new Rails.application
     traceroute.load_everything!
 
-    ENV['FAIL_ON_ERROR']=""
+    ENV['FAIL_ON_ERROR'] = ""
     Rake::Task[:traceroute].execute
   end
 
@@ -86,7 +86,7 @@ class TracerouteRakeTests < Minitest::Test
     traceroute = Traceroute.new Rails.application
 
     begin
-      ENV['FAIL_ON_ERROR']="1"
+      ENV['FAIL_ON_ERROR'] = "1"
       Rake::Task[:traceroute].execute
     rescue => e
       assert_includes e.message, "Unused routes or unreachable action methods detected."
