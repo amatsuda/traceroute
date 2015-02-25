@@ -58,7 +58,7 @@ class TracerouteRakeTests < Minitest::Test
       ENV['FAIL_ON_ERROR']="1"
       Rake::Task[:traceroute].execute
     rescue => e
-      assert_equal true, e.message.include?("Unused routes or unreachable action methods detected.")
+      assert_includes e.message, "Unused routes or unreachable action methods detected."
     end
   end
 
@@ -89,7 +89,7 @@ class TracerouteRakeTests < Minitest::Test
       ENV['FAIL_ON_ERROR']="1"
       Rake::Task[:traceroute].execute
     rescue => e
-      assert_equal true, e.message.include?("Unused routes or unreachable action methods detected.")
+      assert_includes e.message, "Unused routes or unreachable action methods detected."
     end
   end
 
