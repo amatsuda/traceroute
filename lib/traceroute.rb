@@ -25,7 +25,7 @@ class Traceroute
       controller.action_methods.reject {|a| (a =~ /\A(_conditional)?_callback_/) || (a == '_layout_from_proc')}.map do |action|
         "#{controller.controller_path}##{action}"
       end
-    end.flatten
+    end.flatten.reject {|r| r.start_with? 'rails/'}
   end
 
   def routed_actions
@@ -35,7 +35,7 @@ class Traceroute
       else
         "#{r.requirements[:controller]}##{r.requirements[:action]}"
       end
-    end
+    end.reject {|r| r.start_with? 'rails/'}
   end
 
   private
