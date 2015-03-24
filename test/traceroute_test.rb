@@ -47,11 +47,11 @@ class TracerouteRakeTests < Minitest::Test
     load "./lib/tasks/traceroute.rake"
   end
 
-  def test_dont_fail_when_envvar_not_set
+  def test_dont_fail_when_envvar_is_anything_but_1
     traceroute = Traceroute.new Rails.application
     traceroute.load_everything!
 
-    ENV['FAIL_ON_ERROR'] = ""
+    ENV['FAIL_ON_ERROR'] = "DERP"
     Rake::Task[:traceroute].execute
   end
 
