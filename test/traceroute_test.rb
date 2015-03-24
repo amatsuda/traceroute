@@ -10,6 +10,10 @@ class TracerouteTest < Minitest::Test
     assert_equal ['users#index', 'users#index2', 'users#show', 'admin/shops#index', 'admin/shops#create'], @traceroute.defined_action_methods
   end
 
+  def test_jasmine_rails_is_ignored
+    refute @traceroute.defined_action_methods.include? 'jasmine_rails/spec_runner#index'
+  end
+
   def test_routed_actions
     assert_empty @traceroute.routed_actions
   end
@@ -24,6 +28,7 @@ class RoutedActionsTest < Minitest::Test
         resources :shops, :only => :index
       end
     end
+
     @traceroute = Traceroute.new Rails.application
   end
 

@@ -21,11 +21,16 @@ class Traceroute
   end
 
   def defined_action_methods
+    regex = [
+      /^rails\//,
+      /^jasmine_rails\//
+    ]
+
     ActionController::Base.descendants.map do |controller|
       controller.action_methods.reject {|a| (a =~ /\A(_conditional)?_callback_/) || (a == '_layout_from_proc')}.map do |action|
         "#{controller.controller_path}##{action}"
       end
-    end.flatten.reject {|r| r.start_with? 'rails/'}
+    end.flatten.reject {|r| regex.any? { |m| r.match(m) } }
   end
 
   def routed_actions

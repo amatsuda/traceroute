@@ -24,4 +24,8 @@ module Admin; class ShopsController < ApplicationController
   def create; end
 end; end
 
+module JasmineRails; class SpecRunner < ApplicationController
+  def index; end
+end; end
+
 DummyApp::Application.initialize!
