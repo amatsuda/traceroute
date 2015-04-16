@@ -44,6 +44,8 @@ class Traceroute
 
     routes.reject! {|r| r.app.is_a?(ActionDispatch::Routing::Mapper::Constraints) && r.app.app.respond_to?(:call)}
 
+    routes.reject! {|r| r.app.is_a?(ActionDispatch::Routing::Redirect)}
+
     if @app.config.respond_to?(:assets)
       exclusion_regexp = %r{^#{@app.config.assets.prefix}}
 
