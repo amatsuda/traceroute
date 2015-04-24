@@ -3,9 +3,11 @@ task :traceroute => :environment do
   traceroute = Traceroute.new Rails.application
   traceroute.load_everything!
 
-  defined_action_methods = traceroute.defined_action_methods
+  exclusions = Traceroute.load_exclusions(ENV['EXCLUSIONS'])
 
-  routed_actions = traceroute.routed_actions
+  defined_action_methods = traceroute.defined_action_methods(exclusions)
+
+  routed_actions = traceroute.routed_actions(exclusions)
 
   unused_routes = routed_actions - defined_action_methods
   unreachable_action_methods = defined_action_methods - routed_actions

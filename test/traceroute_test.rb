@@ -10,6 +10,10 @@ class TracerouteTest < Minitest::Test
     assert_equal ['users#index', 'users#index2', 'users#show', 'admin/shops#index', 'admin/shops#create'].sort, @traceroute.defined_action_methods.sort
   end
 
+  def test_defined_action_methods_with_exclusions
+    assert_equal %w(users#index users#index2 users#show).sort, @traceroute.defined_action_methods(%w(admin/shops#index admin/shops#create)).sort
+  end
+
   def test_routed_actions
     assert_empty @traceroute.routed_actions
   end
@@ -33,6 +37,10 @@ class RoutedActionsTest < Minitest::Test
 
   def test_routed_actions
     assert_equal ['admin/shops#index', 'users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.sort
+  end
+
+  def test_routed_actions_with_exclusions
+    assert_equal %w(admin/shops#index users#index users#show).sort, @traceroute.routed_actions(%w(users#new users#create)).sort
   end
 end
 
@@ -91,6 +99,10 @@ class TracerouteRakeTests < Minitest::Test
     rescue => e
       assert_includes e.message, "Unused routes or unreachable action methods detected."
     end
+  end
+
+  def test_load_exclusions
+    assert_equal Traceroute.load_exclusions(File.expand_path('../fixtures/exclusions.txt', __FILE__)),  %w(users#index users#show)
   end
 
   def teardown

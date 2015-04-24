@@ -1,0 +1,2 @@
+users#index
+users#show
