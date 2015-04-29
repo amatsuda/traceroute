@@ -48,12 +48,16 @@ class Traceroute
 
     ignore_config = YAML.load_file(".traceroute.yaml")
 
-    ignore_config['ignore_unreachable_actions'].each do |ignored_action|
-      @ingored_unreachable_actions << Regexp.new(ignored_action)
+    if ignore_config.has_key? 'ignore_unreachable_actions'
+      ignore_config['ignore_unreachable_actions'].each do |ignored_action|
+        @ingored_unreachable_actions << Regexp.new(ignored_action)
+      end
     end
 
-    ignore_config['ignore_unused_routes'].each do |ignored_action|
-      @ingored_unused_routes << Regexp.new(ignored_action)
+    if ignore_config.has_key? 'ignore_unused_routes'
+      ignore_config['ignore_unused_routes'].each do |ignored_action|
+        @ingored_unused_routes << Regexp.new(ignored_action)
+      end
     end
   end
 
