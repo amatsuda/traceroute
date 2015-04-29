@@ -8,6 +8,7 @@ class Traceroute
 
   def initialize(app)
     @app = app
+    load_ignored_regex!
   end
 
   def load_everything!
@@ -21,33 +22,41 @@ class Traceroute
   end
 
   def defined_action_methods
-    regex = [
-      /^rails\//,
-      /^jasmine_rails\//
-    ]
-
     ActionController::Base.descendants.map do |controller|
       controller.action_methods.reject {|a| (a =~ /\A(_conditional)?_callback_/) || (a == '_layout_from_proc')}.map do |action|
         "#{controller.controller_path}##{action}"
       end
-    end.flatten.reject {|r| regex.any? { |m| r.match(m) } }
+    end.flatten.reject {|r| @ingored_unreachable_actions.any? { |m| r.match(m) } }
   end
 
   def routed_actions
-    regex = [
-      /^rails\//
-    ]
-
     routes.map do |r|
       if r.requirements[:controller].blank? && r.requirements[:action].blank? && (r.path == '/:controller(/:action(/:id(.:format)))')
         %Q["#{r.path}"  This is a legacy wild controller route that's not recommended for RESTful applications.]
       else
         "#{r.requirements[:controller]}##{r.requirements[:action]}"
       end
-    end.flatten.reject {|r| regex.any? { |m| r.match(m) } }
+    end.flatten.reject {|r| @ingored_unused_routes.any? { |m| r.match(m) } }
   end
 
   private
+  def load_ignored_regex!
+    @ingored_unreachable_actions = [/^rails\//]
+    @ingored_unused_routes = [/^rails\//]
+
+    return unless File.exists? ".traceroute.yaml"
+
+    ignore_config = YAML.load_file(".traceroute.yaml")
+
+    ignore_config['ignore_unreachable_actions'].each do |ignored_action|
+      @ingored_unreachable_actions << Regexp.new(ignored_action)
+    end
+
+    ignore_config['ignore_unused_routes'].each do |ignored_action|
+      @ingored_unused_routes << Regexp.new(ignored_action)
+    end
+  end
+
   def routes
     routes = @app.routes.routes.reject {|r| r.name.nil? && r.requirements.blank?}
 

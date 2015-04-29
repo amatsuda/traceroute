@@ -7,11 +7,7 @@ class TracerouteTest < Minitest::Test
   end
 
   def test_defined_action_methods
-    assert_equal ['users#index', 'users#index2', 'users#show', 'admin/shops#index', 'admin/shops#create'], @traceroute.defined_action_methods
-  end
-
-  def test_jasmine_rails_is_ignored
-    refute @traceroute.defined_action_methods.include? 'jasmine_rails/spec_runner#index'
+    assert_equal ['users#index', 'users#index2', 'users#show', 'admin/shops#index', 'admin/shops#create', 'jasmine_rails/spec_runner#index'], @traceroute.defined_action_methods
   end
 
   def test_routed_actions
@@ -38,6 +34,42 @@ class RoutedActionsTest < Minitest::Test
 
   def test_routed_actions
     assert_equal ['admin/shops#index', 'users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.sort
+  end
+end
+
+class DotFileTest < Minitest::Test
+  def setup
+    File.open ".traceroute.yaml", "w" do |file|
+      file.puts 'ignore_unreachable_actions:'
+      file.puts '- ^jasmine_rails\/'
+      file.puts 'ignore_unused_routes:'
+      file.puts '- ^users'
+    end
+
+    DummyApp::Application.routes.draw do
+      resources :users, :only => [:index, :show, :new, :create]
+
+      namespace :admin do
+        resources :shops, :only => :index
+      end
+    end
+
+    @traceroute = Traceroute.new Rails.application
+    @traceroute.load_everything!
+  end
+
+  def teardown
+    DummyApp::Application.routes.clear!
+
+    File.delete ".traceroute.yaml"
+  end
+
+   def test_unreachable_actions_are_ignored
+    refute @traceroute.defined_action_methods.include? 'jasmine_rails/spec_runner#index'
+  end
+
+  def test_used_routes_are_ignored
+    assert_equal ['admin/shops#index'].sort, @traceroute.routed_actions.sort
   end
 end
 
