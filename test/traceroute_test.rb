@@ -73,6 +73,40 @@ class DotFileTest < Minitest::Test
   end
 end
 
+class FilenameSupportTest < Minitest::Test
+  def test_yml_supported
+    File.open ".traceroute.yml", "w" do |file|
+      file.puts 'ignore_unreachable_actions:'
+      file.puts '- ^jasmine_rails\/'
+      file.puts 'ignore_unused_routes:'
+      file.puts '- ^users'
+    end
+
+    @traceroute = Traceroute.new Rails.application
+    @traceroute.load_everything!
+
+    refute @traceroute.defined_action_methods.include? 'jasmine_rails/spec_runner#index'
+
+    File.delete ".traceroute.yml"
+  end
+
+  def test_no_extension_supported
+    File.open ".traceroute", "w" do |file|
+      file.puts 'ignore_unreachable_actions:'
+      file.puts '- ^jasmine_rails\/'
+      file.puts 'ignore_unused_routes:'
+      file.puts '- ^users'
+    end
+
+    @traceroute = Traceroute.new Rails.application
+    @traceroute.load_everything!
+
+    refute @traceroute.defined_action_methods.include? 'jasmine_rails/spec_runner#index'
+
+    File.delete ".traceroute"
+  end
+end
+
 class TracerouteRakeTests < Minitest::Test
   def setup
     require 'rake'

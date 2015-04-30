@@ -8,6 +8,7 @@ class Traceroute
 
   def initialize(app)
     @app = app
+    @filenames = [".traceroute.yaml", ".traceroute.yml", ".traceroute"]
     load_ignored_regex!
   end
 
@@ -40,13 +41,25 @@ class Traceroute
   end
 
   private
+  def at_least_one_file_exists?
+    exists = @filenames.map {|filename| File.exists? filename }.select {|exists| exists }
+
+    return !exists.empty?
+  end
+
+  def ignore_config
+    @filenames.each do |filename|
+      next unless File.exists? filename
+
+      return YAML.load_file(filename)
+    end
+  end
+
   def load_ignored_regex!
     @ingored_unreachable_actions = [/^rails\//]
     @ingored_unused_routes = [/^rails\//]
 
-    return unless File.exists? ".traceroute.yaml"
-
-    ignore_config = YAML.load_file(".traceroute.yaml")
+    return unless at_least_one_file_exists?
 
     if ignore_config.has_key? 'ignore_unreachable_actions'
       ignore_config['ignore_unreachable_actions'].each do |ignored_action|
