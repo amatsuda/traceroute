@@ -41,19 +41,15 @@ class Traceroute
 
   private
   def filenames
-    [".traceroute.yaml", ".traceroute.yml", ".traceroute"]
+    [".traceroute.yaml", ".traceroute.yml", ".traceroute"].select {|filename| File.exists? filename }
   end
 
   def at_least_one_file_exists?
-    exists = filenames.map {|filename| File.exists? filename }.select {|exists| exists }
-
-    return !exists.empty?
+    return !filenames.empty?
   end
 
   def ignore_config
     filenames.each do |filename|
-      next unless File.exists? filename
-
       return YAML.load_file(filename)
     end
   end
