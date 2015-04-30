@@ -8,7 +8,6 @@ class Traceroute
 
   def initialize(app)
     @app = app
-    @filenames = [".traceroute.yaml", ".traceroute.yml", ".traceroute"]
     load_ignored_regex!
   end
 
@@ -41,14 +40,18 @@ class Traceroute
   end
 
   private
+  def filenames
+    [".traceroute.yaml", ".traceroute.yml", ".traceroute"]
+  end
+
   def at_least_one_file_exists?
-    exists = @filenames.map {|filename| File.exists? filename }.select {|exists| exists }
+    exists = filenames.map {|filename| File.exists? filename }.select {|exists| exists }
 
     return !exists.empty?
   end
 
   def ignore_config
-    @filenames.each do |filename|
+    filenames.each do |filename|
       next unless File.exists? filename
 
       return YAML.load_file(filename)
