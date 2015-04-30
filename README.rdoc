@@ -72,7 +72,7 @@ OMG super helpful, isn't it?
 
 Some gems out there that inject routes or actions into our app for testing. Jasmine-Rails does this. They can give you false negatives when running this in development mode. It can be useful to ignore said routes or actions.
 
-Create a `.traceroute.yaml` file in your root directory.
+Create a .traceroute.yaml (or .traceroute.yml or .traceroute) file in your root directory.
 
   # .traceroute.yaml
   ignore_unreachable_actions:
