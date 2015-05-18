@@ -73,6 +73,72 @@ class DotFileTest < Minitest::Test
   end
 end
 
+class EmptyFileTest < Minitest::Test
+  def setup
+    File.open ".traceroute.yaml", "w" do |file|
+    end
+
+    DummyApp::Application.routes.draw do
+      resources :users, :only => [:index, :show, :new, :create]
+
+      namespace :admin do
+        resources :shops, :only => :index
+      end
+    end
+
+    @traceroute = Traceroute.new Rails.application
+    @traceroute.load_everything!
+  end
+
+  def teardown
+    DummyApp::Application.routes.clear!
+
+    File.delete ".traceroute.yaml"
+  end
+
+   def test_empty_yaml_file_is_handled_the_same_as_no_file
+    assert_equal ['users#index', 'users#index2', 'users#show', 'admin/shops#index', 'admin/shops#create', 'jasmine_rails/spec_runner#index'], @traceroute.defined_action_methods
+  end
+
+  def test_property_with_no_key
+    assert_equal ['admin/shops#index', 'users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.sort
+  end
+end
+
+class InvalidFileTest < Minitest::Test
+  def setup
+    File.open ".traceroute.yml", "w" do |file|
+      file.puts 'ignore_unreachable_actions:'
+      file.puts 'ignore_unused_routes:'
+    end
+
+    DummyApp::Application.routes.draw do
+      resources :users, :only => [:index, :show, :new, :create]
+
+      namespace :admin do
+        resources :shops, :only => :index
+      end
+    end
+
+    @traceroute = Traceroute.new Rails.application
+    @traceroute.load_everything!
+  end
+
+  def teardown
+    DummyApp::Application.routes.clear!
+
+    File.delete ".traceroute.yml"
+  end
+
+   def test_empty_yaml_file_is_handled_the_same_as_no_file
+    assert_equal ['users#index', 'users#index2', 'users#show', 'admin/shops#index', 'admin/shops#create', 'jasmine_rails/spec_runner#index'], @traceroute.defined_action_methods
+  end
+
+  def test_property_with_no_key
+    assert_equal ['admin/shops#index', 'users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.sort
+  end
+end
+
 class FilenameSupportTest < Minitest::Test
   def test_yml_supported
     File.open ".traceroute.yml", "w" do |file|

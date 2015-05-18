@@ -41,7 +41,11 @@ class Traceroute
 
   private
   def filenames
-    [".traceroute.yaml", ".traceroute.yml", ".traceroute"].select {|filename| File.exists? filename }
+    [".traceroute.yaml", ".traceroute.yml", ".traceroute"].select { |filename|
+      File.exists? filename
+    }.select { |filename|
+      YAML.load_file(filename)
+    }
   end
 
   def at_least_one_file_exists?
@@ -61,14 +65,18 @@ class Traceroute
     return unless at_least_one_file_exists?
 
     if ignore_config.has_key? 'ignore_unreachable_actions'
-      ignore_config['ignore_unreachable_actions'].each do |ignored_action|
-        @ingored_unreachable_actions << Regexp.new(ignored_action)
+      unless ignore_config['ignore_unreachable_actions'].nil?
+        ignore_config['ignore_unreachable_actions'].each do |ignored_action|
+          @ingored_unreachable_actions << Regexp.new(ignored_action)
+        end
       end
     end
 
     if ignore_config.has_key? 'ignore_unused_routes'
-      ignore_config['ignore_unused_routes'].each do |ignored_action|
-        @ingored_unused_routes << Regexp.new(ignored_action)
+      unless ignore_config['ignore_unused_routes'].nil?
+        ignore_config['ignore_unused_routes'].each do |ignored_action|
+          @ingored_unused_routes << Regexp.new(ignored_action)
+        end
       end
     end
   end
