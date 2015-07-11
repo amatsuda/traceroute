@@ -62,6 +62,23 @@ class TracerouteRakeTests < Minitest::Test
     end
   end
 
+  def test_rake_task_dont_fail_when_action_not_explicetely_specified
+    DummyApp::Application.routes.draw do
+      get "users/show2"
+    end
+    descendants = ActionController::Base.direct_descendants.clone
+    ActionController::Base.direct_descendants.clear
+
+    begin
+      ENV['FAIL_ON_ERROR'] = "1"
+      Rake::Task[:traceroute].execute
+    rescue => e
+      refute_includes e.message, "Unused routes or unreachable action methods detected."
+    ensure
+      descendants.each { |descendant| ActiveSupport::DescendantsTracker.store_inherited ActionController::Base, descendant }
+    end
+  end
+
   def test_rake_task_fails_when_unused_route_detected
     DummyApp::Application.routes.draw do
       resources :users, :only => [:index, :show, :new, :create] do

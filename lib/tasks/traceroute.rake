@@ -7,7 +7,14 @@ task :traceroute => :environment do
 
   routed_actions = traceroute.routed_actions
 
-  unused_routes = routed_actions - defined_action_methods
+  unused_routes = routed_actions.reject do |action| 
+    defined_action_methods.include?(action) || begin
+      formats = ActionView::Base.default_formats
+      handlers = ActionView::Template::Handlers.extensions
+      options = { variants: [], locale: [], formats: formats , handlers: handlers }
+      ActionController::Base.view_paths.exists? action.gsub("#", "/"), "", false, options
+    end
+  end
   unreachable_action_methods = defined_action_methods - routed_actions
 
   puts "Unused routes (#{unused_routes.count}):"

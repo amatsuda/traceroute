@@ -3,6 +3,8 @@ require 'action_controller/railtie'
 
 require 'traceroute'
 
+ActionController::Base.append_view_path 'test/views'
+
 module DummyApp
   class Application < Rails::Application
     config.root = File.expand_path('..', __FILE__)
