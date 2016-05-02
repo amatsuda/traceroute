@@ -26,7 +26,7 @@ class Traceroute
       controller.action_methods.reject {|a| (a =~ /\A(_conditional)?_callback_/) || (a == '_layout_from_proc')}.map do |action|
         "#{controller.controller_path}##{action}"
       end
-    end.flatten.reject {|r| @ingored_unreachable_actions.any? { |m| r.match(m) } }
+    end.flatten.reject {|r| @ignored_unreachable_actions.any? { |m| r.match(m) } }
   end
 
   def routed_actions
@@ -36,7 +36,7 @@ class Traceroute
       else
         "#{r.requirements[:controller]}##{r.requirements[:action]}"
       end
-    end.flatten.reject {|r| @ingored_unused_routes.any? { |m| r.match(m) } }
+    end.flatten.reject {|r| @ignored_unused_routes.any? { |m| r.match(m) } }
   end
 
   private
@@ -59,15 +59,15 @@ class Traceroute
   end
 
   def load_ignored_regex!
-    @ingored_unreachable_actions = [/^rails\//]
-    @ingored_unused_routes = [/^rails\//]
+    @ignored_unreachable_actions = [/^rails\//]
+    @ignored_unused_routes = [/^rails\//]
 
     return unless at_least_one_file_exists?
 
     if ignore_config.has_key? 'ignore_unreachable_actions'
       unless ignore_config['ignore_unreachable_actions'].nil?
         ignore_config['ignore_unreachable_actions'].each do |ignored_action|
-          @ingored_unreachable_actions << Regexp.new(ignored_action)
+          @ignored_unreachable_actions << Regexp.new(ignored_action)
         end
       end
     end
@@ -75,7 +75,7 @@ class Traceroute
     if ignore_config.has_key? 'ignore_unused_routes'
       unless ignore_config['ignore_unused_routes'].nil?
         ignore_config['ignore_unused_routes'].each do |ignored_action|
-          @ingored_unused_routes << Regexp.new(ignored_action)
+          @ignored_unused_routes << Regexp.new(ignored_action)
         end
       end
     end
