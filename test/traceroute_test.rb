@@ -221,6 +221,7 @@ class TracerouteRakeTests < Minitest::Test
     end
 
     traceroute = Traceroute.new Rails.application
+    traceroute.load_everything!
 
     begin
       ENV['FAIL_ON_ERROR'] = "1"
