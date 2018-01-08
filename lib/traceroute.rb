@@ -42,7 +42,7 @@ class Traceroute
   private
   def filenames
     [".traceroute.yaml", ".traceroute.yml", ".traceroute"].select { |filename|
-      File.exists? filename
+      File.exist? filename
     }.select { |filename|
       YAML.load_file(filename)
     }
