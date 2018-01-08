@@ -7,7 +7,7 @@ class TracerouteTest < Minitest::Test
   end
 
   def test_defined_action_methods
-    assert_equal ['users#index', 'users#show', 'users#index2', 'admin/shops#index', 'admin/shops#create', 'jasmine_rails/spec_runner#index'], @traceroute.defined_action_methods
+    assert_equal ['users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'jasmine_rails/spec_runner#index'], @traceroute.defined_action_methods
   end
 
   def test_routed_actions
@@ -97,7 +97,7 @@ class EmptyFileTest < Minitest::Test
   end
 
    def test_empty_yaml_file_is_handled_the_same_as_no_file
-    assert_equal ['users#index', 'users#index2', 'users#show', 'admin/shops#index', 'admin/shops#create', 'jasmine_rails/spec_runner#index'], @traceroute.defined_action_methods
+    assert_equal ['users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'jasmine_rails/spec_runner#index'], @traceroute.defined_action_methods
   end
 
   def test_property_with_no_key
@@ -131,7 +131,7 @@ class InvalidFileTest < Minitest::Test
   end
 
    def test_empty_yaml_file_is_handled_the_same_as_no_file
-    assert_equal ['users#index', 'users#index2', 'users#show', 'admin/shops#index', 'admin/shops#create', 'jasmine_rails/spec_runner#index'], @traceroute.defined_action_methods
+    assert_equal ['users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'jasmine_rails/spec_runner#index'], @traceroute.defined_action_methods
   end
 
   def test_property_with_no_key
