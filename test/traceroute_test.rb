@@ -177,6 +177,11 @@ class TracerouteRakeTests < Minitest::Test
   def setup
     require 'rake'
     load "./lib/tasks/traceroute.rake"
+    @fail_on_error_was = ENV['FAIL_ON_ERROR']
+  end
+
+  def teardown
+    ENV['FAIL_ON_ERROR'] = @fail_on_error_was
   end
 
   def test_dont_fail_when_envvar_is_anything_but_1
