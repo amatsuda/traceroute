@@ -64,7 +64,7 @@ class DotFileTest < Minitest::Test
     File.delete ".traceroute.yaml"
   end
 
-   def test_unreachable_actions_are_ignored
+  def test_unreachable_actions_are_ignored
     refute @traceroute.defined_action_methods.include? 'jasmine_rails/spec_runner#index'
   end
 
@@ -96,7 +96,7 @@ class EmptyFileTest < Minitest::Test
     File.delete ".traceroute.yaml"
   end
 
-   def test_empty_yaml_file_is_handled_the_same_as_no_file
+  def test_empty_yaml_file_is_handled_the_same_as_no_file
     assert_equal ['users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'jasmine_rails/spec_runner#index'], @traceroute.defined_action_methods
   end
 
@@ -130,7 +130,7 @@ class InvalidFileTest < Minitest::Test
     File.delete ".traceroute.yml"
   end
 
-   def test_empty_yaml_file_is_handled_the_same_as_no_file
+  def test_empty_yaml_file_is_handled_the_same_as_no_file
     assert_equal ['users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'jasmine_rails/spec_runner#index'], @traceroute.defined_action_methods
   end
 
