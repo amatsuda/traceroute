@@ -182,6 +182,8 @@ class TracerouteRakeTests < Minitest::Test
 
   def teardown
     ENV['FAIL_ON_ERROR'] = @fail_on_error_was
+    Rake::Task.clear
+    DummyApp::Application.routes.clear!
   end
 
   def test_dont_fail_when_envvar_is_anything_but_1
@@ -234,10 +236,5 @@ class TracerouteRakeTests < Minitest::Test
     rescue => e
       assert_includes e.message, "Unused routes or unreachable action methods detected."
     end
-  end
-
-  def teardown
-    Rake::Task.clear
-    DummyApp::Application.routes.clear!
   end
 end
