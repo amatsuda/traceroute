@@ -82,7 +82,11 @@ class Traceroute
   end
 
   def routes
-    routes = @app.routes.routes.reject {|r| r.name.nil? && r.requirements.blank?}
+    collect_routes @app.routes.routes.to_a
+  end
+
+  def collect_routes(routes)
+    routes.reject! {|r| r.name.nil? && r.requirements.blank?}
 
     routes.reject! {|r| r.app.is_a?(ActionDispatch::Routing::Mapper::Constraints) && r.app.app.respond_to?(:call)}
 
