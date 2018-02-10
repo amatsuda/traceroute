@@ -1,6 +1,7 @@
 require_relative 'test_helper'
 
-class TracerouteTest < Minitest::Test
+module TracerouteTest
+class BasicTest < Minitest::Test
   def setup
     @traceroute = Traceroute.new Rails.application
     @traceroute.load_everything!
@@ -101,4 +102,5 @@ class TracerouteRakeTests < Minitest::Test
       assert_includes e.message, "Unused routes or unreachable action methods detected."
     end
   end
+end
 end
