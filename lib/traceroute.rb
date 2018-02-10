@@ -82,17 +82,17 @@ class Traceroute
   end
 
   def routes
-    collect_routes @app.routes.routes.to_a
+    collect_routes @app.routes.routes
   end
 
   def collect_routes(routes)
-    routes.reject! {|r| r.name.nil? && r.requirements.blank?}
-
     routes = routes.each_with_object([]) do |r, tmp_routes|
+      next if r.name.nil? && r.requirements.blank?
+
       if r.app.is_a?(ActionDispatch::Routing::Mapper::Constraints) && r.app.app.respond_to?(:routes)
         engine_routes = r.app.app.routes
         if engine_routes.is_a?(ActionDispatch::Routing::RouteSet)
-          tmp_routes.concat collect_routes(engine_routes.routes.to_a)
+          tmp_routes.concat collect_routes(engine_routes.routes)
         end
       else
         tmp_routes << r
