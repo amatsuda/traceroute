@@ -7,7 +7,7 @@ class TracerouteTest < Minitest::Test
   end
 
   def test_defined_action_methods
-    assert_equal ['users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'jasmine_rails/spec_runner#index'].sort, @traceroute.defined_action_methods.sort
+    assert_equal ['users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index'].sort, @traceroute.defined_action_methods.sort
   end
 
   def test_routed_actions

@@ -1,6 +1,25 @@
 require_relative 'test_helper'
 
+module JasmineRails
+  class SpecRunner < ApplicationController; end
+end
+
+module YamlTestsCondition
+  def setup
+    super
+    JasmineRails::SpecRunner.class_eval { def index() end }
+  end
+
+  def teardown
+    super
+    JasmineRails::SpecRunner.send :undef_method, :index
+    JasmineRails::SpecRunner.clear_action_methods!
+  end
+end
+
 class DotFileTest < Minitest::Test
+  prepend YamlTestsCondition
+
   def setup
     File.open ".traceroute.yaml", "w" do |file|
       file.puts 'ignore_unreachable_actions:'
@@ -37,6 +56,8 @@ class DotFileTest < Minitest::Test
 end
 
 class EmptyFileTest < Minitest::Test
+  prepend YamlTestsCondition
+
   def setup
     File.open ".traceroute.yaml", "w" do |file|
     end
@@ -69,6 +90,8 @@ class EmptyFileTest < Minitest::Test
 end
 
 class InvalidFileTest < Minitest::Test
+  prepend YamlTestsCondition
+
   def setup
     File.open ".traceroute.yml", "w" do |file|
       file.puts 'ignore_unreachable_actions:'
@@ -103,6 +126,8 @@ class InvalidFileTest < Minitest::Test
 end
 
 class FilenameSupportTest < Minitest::Test
+  prepend YamlTestsCondition
+
   def test_yml_supported
     File.open ".traceroute.yml", "w" do |file|
       file.puts 'ignore_unreachable_actions:'
