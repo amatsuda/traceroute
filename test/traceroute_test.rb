@@ -4,7 +4,6 @@ module TracerouteTest
   class BasicTest < Minitest::Test
     def setup
       @traceroute = Traceroute.new Rails.application
-      @traceroute.load_everything!
     end
 
     def test_defined_action_methods
@@ -53,7 +52,6 @@ module TracerouteTest
 
     def test_dont_fail_when_envvar_is_anything_but_1
       traceroute = Traceroute.new Rails.application
-      traceroute.load_everything!
 
       ENV['FAIL_ON_ERROR'] = "DERP"
       Rake::Task[:traceroute].execute
@@ -61,7 +59,6 @@ module TracerouteTest
 
     def test_rake_task_fails_when_unreachable_action_method_detected
       traceroute = Traceroute.new Rails.application
-      traceroute.load_everything!
 
       begin
         ENV['FAIL_ON_ERROR']="1"
