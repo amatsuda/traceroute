@@ -35,8 +35,10 @@ class Traceroute
         "#{r.requirements[:controller]}##{r.requirements[:action]}"
       elsif r.path == '/:controller(/:action(/:id(.:format)))'
         %Q["#{r.path}"  This is a legacy wild controller route that's not recommended for RESTful applications.]
-      else
+      elsif (ActionDispatch::Routing::Mapper::Constraints === r.app) && (ActionDispatch::Routing::PathRedirect === r.app.app)
         nil
+      else
+        '(unknown)'
       end
     end.compact.flatten.reject {|r| @ignored_unused_routes.any? { |m| r.match(m) } }
   end
