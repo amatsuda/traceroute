@@ -17,6 +17,7 @@ module EngineTestsCondition
   def teardown
     super
     TestEngine::TasksController.send :undef_method, :index
+    TestEngine::TasksController.clear_action_methods!
   end
 end
 
@@ -77,7 +78,6 @@ module TracerouteWithEngineTest
 
     def teardown
       DummyApp::Application.routes.clear!
-      TestEngine::TasksController.clear_action_methods!
     end
 
     def test_defined_action_methods
