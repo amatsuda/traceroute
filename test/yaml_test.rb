@@ -37,7 +37,6 @@ class DotFileTest < Minitest::Test
     end
 
     @traceroute = Traceroute.new Rails.application
-    @traceroute.load_everything!
   end
 
   def teardown
@@ -71,7 +70,6 @@ class EmptyFileTest < Minitest::Test
     end
 
     @traceroute = Traceroute.new Rails.application
-    @traceroute.load_everything!
   end
 
   def teardown
@@ -107,7 +105,6 @@ class InvalidFileTest < Minitest::Test
     end
 
     @traceroute = Traceroute.new Rails.application
-    @traceroute.load_everything!
   end
 
   def teardown
@@ -137,7 +134,6 @@ class FilenameSupportTest < Minitest::Test
     end
 
     @traceroute = Traceroute.new Rails.application
-    @traceroute.load_everything!
 
     refute @traceroute.defined_action_methods.include? 'jasmine_rails/spec_runner#index'
 
@@ -153,7 +149,6 @@ class FilenameSupportTest < Minitest::Test
     end
 
     @traceroute = Traceroute.new Rails.application
-    @traceroute.load_everything!
 
     refute @traceroute.defined_action_methods.include? 'jasmine_rails/spec_runner#index'
 
