@@ -31,12 +31,14 @@ class Traceroute
 
   def routed_actions
     routes.map do |r|
-      if r.requirements[:controller].blank? && r.requirements[:action].blank? && (r.path == '/:controller(/:action(/:id(.:format)))')
+      if r.requirements[:controller].present? && r.requirements[:action].present?
+        "#{r.requirements[:controller]}##{r.requirements[:action]}"
+      elsif r.path == '/:controller(/:action(/:id(.:format)))'
         %Q["#{r.path}"  This is a legacy wild controller route that's not recommended for RESTful applications.]
       else
-        "#{r.requirements[:controller]}##{r.requirements[:action]}"
+        nil
       end
-    end.flatten.reject {|r| @ignored_unused_routes.any? { |m| r.match(m) } }
+    end.compact.flatten.reject {|r| @ignored_unused_routes.any? { |m| r.match(m) } }
   end
 
   private
