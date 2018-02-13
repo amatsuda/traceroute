@@ -53,21 +53,15 @@ module TracerouteTest
     end
 
     def test_dont_fail_when_envvar_is_anything_but_1
-      traceroute = Traceroute.new Rails.application
-
       ENV['FAIL_ON_ERROR'] = "DERP"
       Rake::Task[:traceroute].execute
     end
 
     def test_rake_task_fails_when_unreachable_action_method_detected
-      traceroute = Traceroute.new Rails.application
-
-      begin
-        ENV['FAIL_ON_ERROR']="1"
-        Rake::Task[:traceroute].execute
-      rescue => e
-        assert_includes e.message, "Unused routes or unreachable action methods detected."
-      end
+      ENV['FAIL_ON_ERROR']="1"
+      Rake::Task[:traceroute].execute
+    rescue => e
+      assert_includes e.message, "Unused routes or unreachable action methods detected."
     end
 
     def test_rake_task_fails_when_unused_route_detected
@@ -90,8 +84,6 @@ module TracerouteTest
           end
         end
       end
-
-      traceroute = Traceroute.new Rails.application
 
       begin
         ENV['FAIL_ON_ERROR'] = "1"
