@@ -1,5 +1,8 @@
 class Traceroute
   VERSION = Gem.loaded_specs['traceroute'].version.to_s
+
+  WILDCARD_ROUTES = %r[^/?:controller\(?/:action].freeze
+
   class Railtie < ::Rails::Railtie
     rake_tasks do
       load File.join(File.dirname(__FILE__), 'tasks/traceroute.rake')
@@ -33,7 +36,7 @@ class Traceroute
     routes.map do |r|
       if r.requirements[:controller].present? && r.requirements[:action].present?
         "#{r.requirements[:controller]}##{r.requirements[:action]}"
-      elsif r.path == '/:controller(/:action(/:id(.:format)))'
+      elsif WILDCARD_ROUTES =~ r.path
         %Q["#{r.path}"  This is a legacy wild controller route that's not recommended for RESTful applications.]
       else
         r.path.to_s
