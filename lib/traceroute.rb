@@ -62,7 +62,7 @@ class Traceroute
 
   def load_ignored_regex!
     @ignored_unreachable_actions = [/^rails\//]
-    @ignored_unused_routes = [/^rails\//]
+    @ignored_unused_routes = [/^rails\//, /^\/cable$/]
 
     return unless at_least_one_file_exists?
 
