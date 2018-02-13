@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 desc 'Prints out unused routes and unreachable action methods'
 task :traceroute => :environment do
   traceroute = Traceroute.new Rails.application

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Traceroute
   VERSION = Gem.loaded_specs['traceroute'].version.to_s
 
