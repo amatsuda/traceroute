@@ -69,6 +69,8 @@ class Traceroute
     @ignored_unreachable_actions = [/^rails\//]
     @ignored_unused_routes = [/^rails\//, /^\/cable$/]
 
+    @ignored_unused_routes << %r{^#{@app.config.assets.prefix}} if @app.config.respond_to? :assets
+
     return unless at_least_one_file_exists?
 
     if ignore_config.has_key? 'ignore_unreachable_actions'
@@ -108,14 +110,6 @@ class Traceroute
 
     routes.reject! {|r| r.app.is_a?(ActionDispatch::Routing::Redirect)}
 
-    if @app.config.respond_to?(:assets)
-      exclusion_regexp = %r{^#{@app.config.assets.prefix}}
-
-      routes.reject! do |route|
-        path = (defined?(ActionDispatch::Journey::Route) || defined?(Journey::Route)) ? route.path.spec.to_s : route.path
-        path =~ exclusion_regexp
-      end
-    end
     routes
   end
 end
