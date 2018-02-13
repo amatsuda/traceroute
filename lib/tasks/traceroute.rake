@@ -14,6 +14,7 @@ task :traceroute => :environment do
 
   puts "Unused routes (#{unused_routes.count}):"
   unused_routes.each {|route| puts "  #{route}"}
+  puts
   puts "Unreachable action methods (#{unreachable_action_methods.count}):"
   unreachable_action_methods.each {|action| puts "  #{action}"}
 
