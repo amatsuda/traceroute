@@ -36,10 +36,12 @@ class Traceroute
     routes.map do |r|
       if r.requirements[:controller].present? && r.requirements[:action].present?
         "#{r.requirements[:controller]}##{r.requirements[:action]}"
-      elsif WILDCARD_ROUTES =~ r.path
+      elsif (String === r.path) && (WILDCARD_ROUTES =~ r.path)
         %Q["#{r.path}"  This is a legacy wild controller route that's not recommended for RESTful applications.]
+      elsif WILDCARD_ROUTES =~ r.path.spec.to_s
+        %Q["#{r.path.spec}"  This is a legacy wild controller route that's not recommended for RESTful applications.]
       else
-        r.path.to_s
+        ((String === r.path) && r.path.to_s) || r.path.spec.to_s  # unknown routes
       end
     end.compact.flatten.reject {|r| @ignored_unused_routes.any? { |m| r.match(m) } }
   end
