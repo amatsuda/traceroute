@@ -90,7 +90,6 @@ class Traceroute
   def collect_routes(routes)
     routes = routes.each_with_object([]) do |r, tmp_routes|
       next if (ActionDispatch::Routing::Mapper::Constraints === r.app) && (ActionDispatch::Routing::PathRedirect === r.app.app)
-      next if r.name.nil? && r.requirements.blank?
 
       if r.app.is_a?(ActionDispatch::Routing::Mapper::Constraints) && r.app.app.respond_to?(:routes)
         engine_routes = r.app.app.routes
