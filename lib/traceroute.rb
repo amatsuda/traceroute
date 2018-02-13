@@ -39,9 +39,9 @@ class Traceroute
       if r.requirements[:controller].present? && r.requirements[:action].present?
         "#{r.requirements[:controller]}##{r.requirements[:action]}"
       elsif (String === r.path) && (WILDCARD_ROUTES =~ r.path)
-        %Q["#{r.path}"  This is a legacy wild controller route that's not recommended for RESTful applications.]
+        %Q["#{r.path}"  ⚠️  This is a legacy wild controller route that's not recommended for RESTful applications.]
       elsif WILDCARD_ROUTES =~ r.path.spec.to_s
-        %Q["#{r.path.spec}"  This is a legacy wild controller route that's not recommended for RESTful applications.]
+        %Q["#{r.path.spec}"  ⚠️  This is a legacy wild controller route that's not recommended for RESTful applications.]
       else
         ((String === r.path) && r.path.to_s) || r.path.spec.to_s  # unknown routes
       end
