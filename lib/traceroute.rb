@@ -35,8 +35,6 @@ class Traceroute
         "#{r.requirements[:controller]}##{r.requirements[:action]}"
       elsif r.path == '/:controller(/:action(/:id(.:format)))'
         %Q["#{r.path}"  This is a legacy wild controller route that's not recommended for RESTful applications.]
-      elsif (ActionDispatch::Routing::Mapper::Constraints === r.app) && (ActionDispatch::Routing::PathRedirect === r.app.app)
-        nil
       else
         '(unknown)'
       end
@@ -91,6 +89,7 @@ class Traceroute
 
   def collect_routes(routes)
     routes = routes.each_with_object([]) do |r, tmp_routes|
+      next if (ActionDispatch::Routing::Mapper::Constraints === r.app) && (ActionDispatch::Routing::PathRedirect === r.app.app)
       next if r.name.nil? && r.requirements.blank?
 
       if r.app.is_a?(ActionDispatch::Routing::Mapper::Constraints) && r.app.app.respond_to?(:routes)
