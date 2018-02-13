@@ -36,7 +36,7 @@ class Traceroute
       elsif r.path == '/:controller(/:action(/:id(.:format)))'
         %Q["#{r.path}"  This is a legacy wild controller route that's not recommended for RESTful applications.]
       else
-        '(unknown)'
+        r.path.to_s
       end
     end.compact.flatten.reject {|r| @ignored_unused_routes.any? { |m| r.match(m) } }
   end
