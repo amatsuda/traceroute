@@ -14,6 +14,7 @@ module DummyApp
 end
 
 class ApplicationController < ActionController::Base; end
+class ApiController < ActionController::API; end
 
 class UsersController < ApplicationController
   def index; end
@@ -22,6 +23,11 @@ class UsersController < ApplicationController
 end
 
 module Admin; class ShopsController < ApplicationController
+  def index; end
+  def create; end
+end; end
+
+module Api; class BooksController < ApiController
   def index; end
   def create; end
 end; end
