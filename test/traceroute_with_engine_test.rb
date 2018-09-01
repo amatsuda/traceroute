@@ -32,7 +32,7 @@ module TracerouteWithEngineTest
     end
 
     def test_defined_action_methods
-      assert_equal ["admin/shops#create", "admin/shops#index", "test_engine/tasks#index", "users#index", "users#index2", "users#show"].sort, @traceroute.defined_action_methods.sort
+      assert_equal ["admin/shops#create", "admin/shops#index", "api/books#create", "api/books#index", "test_engine/tasks#index", "users#index", "users#index2", "users#show"].sort, @traceroute.defined_action_methods.sort
     end
 
     def test_routed_actions
@@ -83,7 +83,7 @@ module TracerouteWithEngineTest
     end
 
     def test_defined_action_methods
-      assert_equal ["admin/shops#create", "admin/shops#index", "test_engine/tasks#index", "users#index", "users#index2", "users#show"].sort, @traceroute.defined_action_methods.sort
+      assert_equal ["admin/shops#create", "admin/shops#index", "api/books#create", "api/books#index", "test_engine/tasks#index", "users#index", "users#index2", "users#show"].sort, @traceroute.defined_action_methods.sort
     end
 
     def test_routed_actions

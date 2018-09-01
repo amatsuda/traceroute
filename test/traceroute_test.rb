@@ -9,7 +9,7 @@ module TracerouteTest
     end
 
     def test_defined_action_methods
-      assert_equal ['users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index'].sort, @traceroute.defined_action_methods.sort
+      assert_equal ['users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index'].sort, @traceroute.defined_action_methods.sort
     end
 
     def test_routed_actions
@@ -25,6 +25,10 @@ module TracerouteTest
         namespace :admin do
           resources :shops, :only => :index
         end
+
+        namespace :api do
+          resources :books, :only => :index
+        end
       end
 
       @traceroute = Traceroute.new Rails.application
@@ -35,7 +39,7 @@ module TracerouteTest
     end
 
     def test_routed_actions
-      assert_equal ['admin/shops#index', 'users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.sort
+      assert_equal ['admin/shops#index', 'api/books#index', 'users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.sort
     end
   end
 
@@ -74,6 +78,10 @@ module TracerouteTest
 
         namespace :admin do
           resources :shops, :only => [:index, :create]
+        end
+
+        namespace :api do
+          resources :books, :only => [:index, :create]
         end
 
         namespace :rails do

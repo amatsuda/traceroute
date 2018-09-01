@@ -28,10 +28,12 @@ class Traceroute
   end
 
   def defined_action_methods
-    ActionController::Base.descendants.map do |controller|
-      controller.action_methods.reject {|a| (a =~ /\A(_conditional)?_callback_/) || (a == '_layout_from_proc')}.map do |action|
-        "#{controller.controller_path}##{action}"
-      end
+    [ActionController::Base, ActionController::API].map do |klass|
+      klass.descendants.map do |controller|
+        controller.action_methods.reject {|a| (a =~ /\A(_conditional)?_callback_/) || (a == '_layout_from_proc')}.map do |action|
+          "#{controller.controller_path}##{action}"
+        end
+      end.flatten
     end.flatten.reject {|r| @ignored_unreachable_actions.any? { |m| r.match(m) } }
   end
 
