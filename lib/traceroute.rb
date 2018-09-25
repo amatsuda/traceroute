@@ -28,7 +28,7 @@ class Traceroute
   end
 
   def defined_action_methods
-    [ActionController::Base, ActionController::API].map do |klass|
+    [ActionController::Base, (ActionController::API if defined?(ActionController::API))].compact.map do |klass|
       klass.descendants.map do |controller|
         controller.action_methods.reject {|a| (a =~ /\A(_conditional)?_callback_/) || (a == '_layout_from_proc')}.map do |action|
           "#{controller.controller_path}##{action}"
