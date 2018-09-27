@@ -11,8 +11,6 @@ Gem::Specification.new do |s|
   s.summary     = 'A Rake task that helps you find the dead routes and actions for your Rails 3 app'
   s.description =  "This Rake task investigates the application's routes definition, then tells you unused routes and unreachable action methods"
 
-  s.rubyforge_project = 'traceroute'
-
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
