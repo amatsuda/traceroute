@@ -33,6 +33,10 @@ If you want the rake task to fail when errors are found.
 
   % FAIL_ON_ERROR=1 rake traceroute
 
+If you included helpers in your controllers you can ignore them by using --ignore-helpers flag
+
+  % rake traceroute --ignore-helpers
+
 == What's gonna happen then?
 
 Consider you have the following routes.rb and a controller:

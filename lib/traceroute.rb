@@ -51,6 +51,19 @@ class Traceroute
     end.compact.flatten.reject {|r| @ignored_unused_routes.any? { |m| r.match(m) } }
   end
 
+  def user_helper_methods
+    get_helper_modules.map(&:public_instance_methods).flatten
+  end
+
+  def framework_helper_methods
+    ActionView::Helpers.constants
+      .select { |c| c.to_s.include?('Helper') }
+      .map { |c| ActionView::Helpers.const_get(c) }
+      .map { |m| m.public_instance_methods }
+      .flatten
+      .uniq
+  end
+
   private
   def filenames
     [".traceroute.yaml", ".traceroute.yml", ".traceroute"].select { |filename|
@@ -116,5 +129,27 @@ class Traceroute
     routes.reject! {|r| r.app.is_a?(ActionDispatch::Routing::Redirect)}
 
     routes
+  end
+
+  def get_helper_modules(subtree = [])
+    helper_directory = Rails.root.join('app').join('helpers')
+    subtree.each do |folder|
+      helper_directory = helper_directory.join(folder)
+    end
+    entries = Dir.entries(helper_directory) - %w(. ..)
+    files = entries.select { |e| e.include?('.rb') }
+    modules = files.map do |file|
+      module_name = subtree.map(&:camelcase).join('::')
+      if module_name.present?
+        module_name += '::'
+      end
+      class_name = file.gsub('.rb', '').camelcase
+      (module_name + class_name).constantize
+    end
+    directores = entries.reject { |e| e.include?('.rb') }
+    directores.each do |dir|
+      modules.concat get_helper_modules(subtree + [dir])
+    end
+    modules
   end
 end
