@@ -56,7 +56,7 @@ class DotFileTest < Minitest::Test
   end
 
   def test_used_routes_are_ignored
-    assert_equal ['admin/shops#index', 'api/books#index'].sort, @traceroute.routed_actions.sort
+    assert_routed_actions 'admin/shops#index', 'api/books#index'
   end
 end
 
@@ -88,11 +88,11 @@ class EmptyFileTest < Minitest::Test
   end
 
   def test_empty_yaml_file_is_handled_the_same_as_no_file
-    assert_equal ['users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index', 'jasmine_rails/spec_runner#index'].sort, @traceroute.defined_action_methods.sort
+    assert_defined_action_methods 'users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index', 'jasmine_rails/spec_runner#index'
   end
 
   def test_property_with_no_key
-    assert_equal ['admin/shops#index', 'api/books#index', 'users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.sort
+    assert_routed_actions 'admin/shops#index', 'api/books#index', 'users#index', 'users#show', 'users#new', 'users#create'
   end
 end
 
@@ -127,11 +127,11 @@ class InvalidFileTest < Minitest::Test
   end
 
   def test_empty_yaml_file_is_handled_the_same_as_no_file
-    assert_equal ['users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index', 'jasmine_rails/spec_runner#index'].sort, @traceroute.defined_action_methods.sort
+    assert_defined_action_methods 'users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index', 'jasmine_rails/spec_runner#index'
   end
 
   def test_property_with_no_key
-    assert_equal ['admin/shops#index', 'api/books#index', 'users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.sort
+    assert_routed_actions 'admin/shops#index', 'api/books#index', 'users#index', 'users#show', 'users#new', 'users#create'
   end
 end
 

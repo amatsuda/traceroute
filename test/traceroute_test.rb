@@ -9,7 +9,7 @@ module TracerouteTest
     end
 
     def test_defined_action_methods
-      assert_equal ['users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index'].sort, @traceroute.defined_action_methods.sort
+      assert_defined_action_methods 'users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index'
     end
 
     def test_routed_actions
@@ -39,7 +39,7 @@ module TracerouteTest
     end
 
     def test_routed_actions
-      assert_equal ['admin/shops#index', 'api/books#index', 'users#index', 'users#show', 'users#new', 'users#create'].sort, @traceroute.routed_actions.sort
+      assert_routed_actions 'admin/shops#index', 'api/books#index', 'users#index', 'users#show', 'users#new', 'users#create'
     end
   end
 
