@@ -15,8 +15,8 @@ class Traceroute
   def initialize(app)
     @app = app
 
-    @ignored_unreachable_actions = [/^rails\//]
-    @ignored_unused_routes = [/^rails\//, /^\/cable$/]
+    @ignored_unreachable_actions = []
+    @ignored_unused_routes = [/^\/cable$/]
 
     @ignored_unused_routes << %r{^#{@app.config.assets.prefix}} if @app.config.respond_to? :assets
 
