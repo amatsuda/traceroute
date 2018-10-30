@@ -52,17 +52,13 @@ class Traceroute
   end
 
   private
-  def ignore_config
-    %w(.traceroute.yaml .traceroute.yml .traceroute).detect {|f| File.exist?(f)}.tap {|f| break YAML.load_file(f)}
-  end
-
   def load_ignored_regex
     @ignored_unreachable_actions = [/^rails\//]
     @ignored_unused_routes = [/^rails\//, /^\/cable$/]
 
     @ignored_unused_routes << %r{^#{@app.config.assets.prefix}} if @app.config.respond_to? :assets
 
-    ignore_config = ignore_config()
+    ignore_config = %w(.traceroute.yaml .traceroute.yml .traceroute).detect {|f| File.exist?(f)}.tap {|f| break YAML.load_file(f)}
     return unless ignore_config
 
     if ignore_config.has_key? 'ignore_unreachable_actions'
