@@ -14,7 +14,7 @@ class Traceroute
 
   def initialize(app)
     @app = app
-    load_ignored_regex!
+    load_ignored_regex
   end
 
   def load_everything!
@@ -66,7 +66,7 @@ class Traceroute
     end
   end
 
-  def load_ignored_regex!
+  def load_ignored_regex
     @ignored_unreachable_actions = [/^rails\//]
     @ignored_unused_routes = [/^rails\//, /^\/cable$/]
 
