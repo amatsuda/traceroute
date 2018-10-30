@@ -56,10 +56,6 @@ class Traceroute
     %w(.traceroute.yaml .traceroute.yml .traceroute).select {|f| File.exist?(f) && YAML.load_file(f) }
   end
 
-  def at_least_one_file_exists?
-    return !filenames.empty?
-  end
-
   def ignore_config
     filenames.each do |filename|
       return YAML.load_file(filename)
@@ -72,9 +68,8 @@ class Traceroute
 
     @ignored_unused_routes << %r{^#{@app.config.assets.prefix}} if @app.config.respond_to? :assets
 
-    return unless at_least_one_file_exists?
-
     ignore_config = ignore_config()
+    return unless ignore_config
 
     if ignore_config.has_key? 'ignore_unreachable_actions'
       unless ignore_config['ignore_unreachable_actions'].nil?
