@@ -74,6 +74,8 @@ class Traceroute
 
     return unless at_least_one_file_exists?
 
+    ignore_config = ignore_config()
+
     if ignore_config.has_key? 'ignore_unreachable_actions'
       unless ignore_config['ignore_unreachable_actions'].nil?
         ignore_config['ignore_unreachable_actions'].each do |ignored_action|
