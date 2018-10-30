@@ -14,7 +14,21 @@ class Traceroute
 
   def initialize(app)
     @app = app
-    load_ignored_regex
+
+    @ignored_unreachable_actions = [/^rails\//]
+    @ignored_unused_routes = [/^rails\//, /^\/cable$/]
+
+    @ignored_unused_routes << %r{^#{@app.config.assets.prefix}} if @app.config.respond_to? :assets
+
+    if (config_file = %w(.traceroute.yaml .traceroute.yml .traceroute).detect {|f| File.exist?(f)}.tap {|f| break YAML.load_file(f)})
+      (config_file['ignore_unreachable_actions'] || []).each do |ignored_action|
+        @ignored_unreachable_actions << Regexp.new(ignored_action)
+      end
+
+     (config_file['ignore_unused_routes'] || []).each do |ignored_action|
+        @ignored_unused_routes << Regexp.new(ignored_action)
+      end
+    end
   end
 
   def load_everything!
@@ -49,24 +63,6 @@ class Traceroute
         ((String === r.path) && r.path.to_s) || r.path.spec.to_s  # unknown routes
       end
     end.compact.flatten.reject {|r| @ignored_unused_routes.any? { |m| r.match(m) } }
-  end
-
-  private
-  def load_ignored_regex
-    @ignored_unreachable_actions = [/^rails\//]
-    @ignored_unused_routes = [/^rails\//, /^\/cable$/]
-
-    @ignored_unused_routes << %r{^#{@app.config.assets.prefix}} if @app.config.respond_to? :assets
-
-    if (config_file = %w(.traceroute.yaml .traceroute.yml .traceroute).detect {|f| File.exist?(f)}.tap {|f| break YAML.load_file(f)})
-      (config_file['ignore_unreachable_actions'] || []).each do |ignored_action|
-        @ignored_unreachable_actions << Regexp.new(ignored_action)
-      end
-
-      (config_file['ignore_unused_routes'] || []).each do |ignored_action|
-        @ignored_unused_routes << Regexp.new(ignored_action)
-      end
-    end
   end
 
   def routes
