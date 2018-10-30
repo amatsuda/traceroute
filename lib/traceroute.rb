@@ -20,7 +20,8 @@ class Traceroute
 
     @ignored_unused_routes << %r{^#{@app.config.assets.prefix}} if @app.config.respond_to? :assets
 
-    if (config_file = %w(.traceroute.yaml .traceroute.yml .traceroute).detect {|f| File.exist?(f)}.tap {|f| break YAML.load_file(f)})
+    config_filename = %w(.traceroute.yaml .traceroute.yml .traceroute).detect {|f| File.exist?(f)}
+    if config_filename && (config_file = YAML.load_file(config_filename))
       (config_file['ignore_unreachable_actions'] || []).each do |ignored_action|
         @ignored_unreachable_actions << Regexp.new(ignored_action)
       end
