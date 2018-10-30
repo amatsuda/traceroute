@@ -53,11 +53,7 @@ class Traceroute
 
   private
   def filenames
-    [".traceroute.yaml", ".traceroute.yml", ".traceroute"].select { |filename|
-      File.exist? filename
-    }.select { |filename|
-      YAML.load_file(filename)
-    }
+    %w(.traceroute.yaml .traceroute.yml .traceroute).select {|f| File.exist?(f) && YAML.load_file(f) }
   end
 
   def at_least_one_file_exists?
