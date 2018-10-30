@@ -52,14 +52,8 @@ class Traceroute
   end
 
   private
-  def filenames
-    %w(.traceroute.yaml .traceroute.yml .traceroute).select {|f| File.exist?(f) && YAML.load_file(f) }
-  end
-
   def ignore_config
-    filenames.each do |filename|
-      return YAML.load_file(filename)
-    end
+    %w(.traceroute.yaml .traceroute.yml .traceroute).detect {|f| File.exist?(f)}.tap {|f| break YAML.load_file(f)}
   end
 
   def load_ignored_regex
