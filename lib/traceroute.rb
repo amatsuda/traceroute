@@ -61,16 +61,12 @@ class Traceroute
     ignore_config = %w(.traceroute.yaml .traceroute.yml .traceroute).detect {|f| File.exist?(f)}.tap {|f| break YAML.load_file(f)}
     return unless ignore_config
 
-    if ignore_config['ignore_unreachable_actions']
-      ignore_config['ignore_unreachable_actions'].each do |ignored_action|
-        @ignored_unreachable_actions << Regexp.new(ignored_action)
-      end
+    (ignore_config['ignore_unreachable_actions'] || []).each do |ignored_action|
+      @ignored_unreachable_actions << Regexp.new(ignored_action)
     end
 
-    if ignore_config['ignore_unused_routes']
-      ignore_config['ignore_unused_routes'].each do |ignored_action|
-        @ignored_unused_routes << Regexp.new(ignored_action)
-      end
+    (ignore_config['ignore_unused_routes'] || []).each do |ignored_action|
+      @ignored_unused_routes << Regexp.new(ignored_action)
     end
   end
 
