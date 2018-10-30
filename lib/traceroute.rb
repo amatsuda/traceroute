@@ -26,7 +26,7 @@ class Traceroute
         @ignored_unreachable_actions << Regexp.new(ignored_action)
       end
 
-     (config['ignore_unused_routes'] || []).each do |ignored_action|
+      (config['ignore_unused_routes'] || []).each do |ignored_action|
         @ignored_unused_routes << Regexp.new(ignored_action)
       end
     end
