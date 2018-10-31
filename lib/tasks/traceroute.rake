@@ -9,56 +9,35 @@ task :traceroute => :environment do
 
   routed_actions = traceroute.routed_actions
 
-  unused_routes = routed_actions - defined_action_methods
-  unreachable_action_methods = defined_action_methods - routed_actions
+  unless ENV['UNREACHABLE_ACTION_METHODS_ONLY']
+    unused_routes = routed_actions - defined_action_methods
+    puts "Unused routes (#{unused_routes.count}):"
+    unused_routes.each {|route| puts "  #{route}"}
+  end
 
-  puts "Unused routes (#{unused_routes.count}):"
-  unused_routes.each {|route| puts "  #{route}"}
-  puts
-  puts "Unreachable action methods (#{unreachable_action_methods.count}):"
-  unreachable_action_methods.each {|action| puts "  #{action}"}
+  puts unless (ENV['UNREACHABLE_ACTION_METHODS_ONLY'] || ENV['UNUSED_ROUTES_ONLY'])
 
-  if ENV['FAIL_ON_ERROR'] && (unused_routes.any? || unreachable_action_methods.any?)
+  unless ENV['UNUSED_ROUTES_ONLY']
+    unreachable_action_methods = defined_action_methods - routed_actions
+    puts "Unreachable action methods (#{unreachable_action_methods.count}):"
+    unreachable_action_methods.each {|action| puts "  #{action}"}
+  end
+
+  if ENV['FAIL_ON_ERROR'] && ((!ENV['UNREACHABLE_ACTION_METHODS_ONLY'] && unused_routes.any?) || (!ENV['UNUSED_ROUTES_ONLY'] && unreachable_action_methods.any?))
     fail "Unused routes or unreachable action methods detected."
   end
 end
 
 namespace :traceroute do
-  desc "Prints out unused routes"
+  desc 'Prints out unused routes'
   task :unused_routes => :environment do
-    traceroute = Traceroute.new Rails.application
-    traceroute.load_everything!
-
-    defined_action_methods = traceroute.defined_action_methods
-
-    routed_actions = traceroute.routed_actions
-
-    unused_routes = routed_actions - defined_action_methods
-
-    puts "Unused routes (#{unused_routes.count}):"
-    unused_routes.each {|route| puts "  #{route}"}
-
-    unless unused_routes.empty? || ENV['FAIL_ON_ERROR'] != "1"
-      fail "Unused routes."
-    end
+    ENV['UNUSED_ROUTES_ONLY'] = '1'
+    Rake::Task[:traceroute].invoke
   end
 
-  desc "Prints out unreachable action methods"
+  desc 'Prints out unreachable action methods'
   task :unreachable_action_methods => :environment do
-    traceroute = Traceroute.new Rails.application
-    traceroute.load_everything!
-
-    defined_action_methods = traceroute.defined_action_methods
-
-    routed_actions = traceroute.routed_actions
-
-    unreachable_action_methods = defined_action_methods - routed_actions
-
-    puts "Unreachable action methods (#{unreachable_action_methods.count}):"
-    unreachable_action_methods.each {|action| puts "  #{action}"}
-
-    unless (unreachable_action_methods.empty?) || ENV['FAIL_ON_ERROR'] != "1"
-      fail "Unreachable action methods detected."
-    end
+    ENV['UNREACHABLE_ACTION_METHODS_ONLY'] = '1'
+    Rake::Task[:traceroute].invoke
   end
 end
