@@ -56,11 +56,6 @@ module TracerouteTest
       DummyApp::Application.routes.clear!
     end
 
-    def test_dont_fail_when_envvar_is_anything_but_1
-      ENV['FAIL_ON_ERROR'] = "DERP"
-      Rake::Task[:traceroute].execute
-    end
-
     def test_rake_task_fails_when_unreachable_action_method_detected
       ENV['FAIL_ON_ERROR']="1"
       Rake::Task[:traceroute].execute
