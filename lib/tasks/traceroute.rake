@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 desc 'Prints out unused routes and unreachable action methods'
-task traceroute: :environment do
+task :traceroute => :environment do
   traceroute = Traceroute.new Rails.application
   traceroute.load_everything!
 
@@ -25,7 +25,7 @@ end
 
 namespace :traceroute do
   desc "Prints out unused routes"
-  task unused_routes: :environment do
+  task :unused_routes => :environment do
     traceroute = Traceroute.new Rails.application
     traceroute.load_everything!
 
@@ -44,7 +44,7 @@ namespace :traceroute do
   end
 
   desc "Prints out unreachable action methods"
-  task unreachable_action_methods: :environment do
+  task :unreachable_action_methods => :environment do
     traceroute = Traceroute.new Rails.application
     traceroute.load_everything!
 
