@@ -51,7 +51,7 @@ class Traceroute
   end
 
   def defined_action_methods
-    [ActionController::Base, (ActionController::API if defined?(ActionController::API))].compact.map do |klass|
+    @defined_action_methods ||= [ActionController::Base, (ActionController::API if defined?(ActionController::API))].compact.map do |klass|
       klass.descendants.map do |controller|
         controller.action_methods.reject {|a| (a =~ /\A(_conditional)?_callback_/) || (a == '_layout_from_proc')}.map do |action|
           "#{controller.controller_path}##{action}"
@@ -61,7 +61,7 @@ class Traceroute
   end
 
   def routed_actions
-    routes.map do |r|
+    @routed_actions ||= routes.map do |r|
       if r.requirements[:controller].present? && r.requirements[:action].present?
         "#{r.requirements[:controller]}##{r.requirements[:action]}"
       elsif (String === r.path) && (WILDCARD_ROUTES =~ r.path)
