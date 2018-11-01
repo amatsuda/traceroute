@@ -42,6 +42,14 @@ class Traceroute
     Rails::Engine.subclasses.each(&:eager_load!)
   end
 
+  def unused_routes
+    routed_actions - defined_action_methods
+  end
+
+  def unreachable_action_methods
+    defined_action_methods - routed_actions
+  end
+
   def defined_action_methods
     [ActionController::Base, (ActionController::API if defined?(ActionController::API))].compact.map do |klass|
       klass.descendants.map do |controller|
