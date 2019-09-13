@@ -39,6 +39,8 @@ class Traceroute
     ::Rails::MailersController rescue NameError
     @app.reload_routes!
 
+    Zeitwerk::Loader.eager_load_all if Object.const_defined?("Zeitwerk")
+
     Rails::Engine.subclasses.each(&:eager_load!)
   end
 
