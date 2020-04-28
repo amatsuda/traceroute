@@ -22,6 +22,8 @@ module TracerouteTest
       DummyApp::Application.routes.draw do
         resources :users, :only => [:index, :show, :new, :create]
 
+        get '/', to: redirect('/users'), constraints: lambda { true }
+
         namespace :admin do
           resources :shops, :only => :index
         end
