@@ -20,6 +20,7 @@ class UsersController < ApplicationController
   def index; end
   def index2; end
   def show; end
+  def custom_action; end
 end
 
 module Admin; class ShopsController < ApplicationController

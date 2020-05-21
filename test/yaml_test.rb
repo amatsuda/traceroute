@@ -28,10 +28,13 @@ class DotFileTest < Minitest::Test
       file.puts '- ^jasmine_rails\/'
       file.puts 'ignore_unused_routes:'
       file.puts '- ^users'
+      file.puts 'ignore_overridden_routes:'
+      file.puts '- ^/users/custom_action'
     end
 
     DummyApp::Application.routes.draw do
       resources :users, :only => [:index, :show, :new, :create]
+      get "/users/custom_action", :to => "users#custom_action"
 
       namespace :admin do
         resources :shops, :only => :index
@@ -57,6 +60,10 @@ class DotFileTest < Minitest::Test
 
   def test_used_routes_are_ignored
     assert_routed_actions 'admin/shops#index', 'api/books#index'
+  end
+
+  def test_overridden_routes_are_ignored
+    assert_equal({}, @traceroute.overridden_routes)
   end
 end
 
@@ -88,7 +95,7 @@ class EmptyFileTest < Minitest::Test
   end
 
   def test_empty_yaml_file_is_handled_the_same_as_no_file
-    assert_defined_action_methods 'users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index', 'jasmine_rails/spec_runner#index'
+    assert_defined_action_methods 'users#index', 'users#show', 'users#index2', 'users#custom_action', 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index', 'jasmine_rails/spec_runner#index'
   end
 
   def test_property_with_no_key
@@ -127,7 +134,7 @@ class InvalidFileTest < Minitest::Test
   end
 
   def test_empty_yaml_file_is_handled_the_same_as_no_file
-    assert_defined_action_methods 'users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index', 'jasmine_rails/spec_runner#index'
+    assert_defined_action_methods 'users#index', 'users#show', 'users#index2', 'users#custom_action', 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index', 'jasmine_rails/spec_runner#index'
   end
 
   def test_property_with_no_key
