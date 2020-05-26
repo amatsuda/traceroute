@@ -9,7 +9,7 @@ module TracerouteTest
     end
 
     def test_defined_action_methods
-      assert_defined_action_methods 'users#index', 'users#show', 'users#index2', 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index'
+      assert_defined_action_methods 'users#index', 'users#show', 'users#index2', 'users#custom_action', 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index'
     end
 
     def test_routed_actions
@@ -62,7 +62,7 @@ module TracerouteTest
       ENV['FAIL_ON_ERROR']="1"
       Rake::Task[:traceroute].execute
     rescue => e
-      assert_includes e.message, "Unused routes or unreachable action methods detected."
+      assert_includes e.message, "Unreachable action methods detected."
     end
 
     def test_rake_task_fails_when_unused_route_detected
@@ -94,7 +94,21 @@ module TracerouteTest
         ENV['FAIL_ON_ERROR'] = "1"
         Rake::Task[:traceroute].execute
       rescue => e
-        assert_includes e.message, "Unused routes or unreachable action methods detected."
+        assert_includes e.message, "Unused routes, unreachable action methods detected."
+      end
+    end
+
+    def test_rake_task_fails_when_overridden_route_detected
+      DummyApp::Application.routes.draw do
+        resources :users, :only => [:show]
+        get "/users/custom_action", :to => "users#custom_action"
+      end
+
+      begin
+        ENV['FAIL_ON_ERROR'] = "1"
+        Rake::Task[:traceroute].execute
+      rescue => e
+        assert_includes e.message, "Unreachable action methods, overridden routes detected."
       end
     end
   end

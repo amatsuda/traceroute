@@ -40,6 +40,7 @@ Consider you have the following routes.rb and a controller:
   # config/routes.rb
   YourRailsApp::Application.routes.draw do
     resources :users, :only => [:index, :show, :new, :create]
+    get "/users/custom_action", :to => "users#custom_action"
     match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
   end
 
@@ -50,6 +51,9 @@ Consider you have the following routes.rb and a controller:
     end
 
     def index2
+    end
+
+    def custom_action
     end
 
     def show
@@ -63,8 +67,13 @@ Running the Rake task will print something like this for you:
     users#create
     users#new
     catalog#purchase
+
   Unreachable action methods (1):
     users#index2
+
+  Overridden routes (1 group):
+    GET /users/:id(.:format) users#show
+      GET /users/custom_action(.:format) users#custom_action
 
 OMG super helpful, isn't it?
 
@@ -79,6 +88,8 @@ Create a .traceroute.yaml (or .traceroute.yml or .traceroute) file in your root 
   - ^jasmine_rails\/
   ignore_unused_routes:
   - ^users#index
+  ignore_overridden_routes:
+  - ^/users/custom_action
 
 Both yaml headers accept a list of regexes.
 
