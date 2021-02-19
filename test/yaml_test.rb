@@ -26,8 +26,10 @@ class DotFileTest < Minitest::Test
     File.open ".traceroute.yaml", "w" do |file|
       file.puts 'ignore_unreachable_actions:'
       file.puts '- ^jasmine_rails\/'
+      file.puts '- foo_unused'
       file.puts 'ignore_unused_routes:'
       file.puts '- ^users'
+      file.puts '- bar_unused'
     end
 
     DummyApp::Application.routes.draw do
@@ -57,6 +59,16 @@ class DotFileTest < Minitest::Test
 
   def test_used_routes_are_ignored
     assert_routed_actions 'admin/shops#index', 'api/books#index'
+  end
+
+  def test_unused_ignored_unused_routes_are_reported
+    @traceroute.routed_actions # Trigger the check
+    assert_equal @traceroute.unused_ignored_unused_routes, [/bar_unused/]
+  end
+
+  def test_unused_ignored_unreachable_action_methods_are_reported
+    @traceroute.defined_action_methods # Trigger the check
+    assert_equal @traceroute.unused_ignored_unreachable_action_methods, [/foo_unused/]
   end
 end
 
