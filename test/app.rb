@@ -14,7 +14,6 @@ module DummyApp
 end
 
 class ApplicationController < ActionController::Base; end
-class ApiController < ActionController::API; end
 
 class UsersController < ApplicationController
   def index; end
@@ -27,7 +26,11 @@ module Admin; class ShopsController < ApplicationController
   def create; end
 end; end
 
-module Api; class BooksController < ApiController
-  def index; end
-  def create; end
-end; end
+if defined?(ActionController::API)
+  class ApiController < ActionController::API; end
+
+  module Api; class BooksController < ApiController
+    def index; end
+    def create; end
+  end; end
+end
