@@ -1,6 +1,8 @@
 # coding: utf-8
 # frozen_string_literal: true
 
+require 'yaml'
+
 class Traceroute
   VERSION = Gem.loaded_specs['traceroute'].version.to_s
 
