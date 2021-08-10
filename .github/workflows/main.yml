@@ -1,0 +1,49 @@
+name: build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        ruby_version: [ruby-head, '3.0', '2.7', '2.6']
+
+        gemfile:
+          - gemfiles/rails_edge.gemfile
+          - gemfiles/rails_61.gemfile
+          - gemfiles/rails_60.gemfile
+          - gemfiles/rails_52.gemfile
+
+        exclude:
+          - ruby_version: ruby-head
+            gemfile: gemfiles/rails_60.gemfile
+          - ruby_version: ruby-head
+            gemfile: gemfiles/rails_52.gemfile
+          - ruby_version: '3.0'
+            gemfile: gemfiles/rails_52.gemfile
+          - ruby_version: '2.6'
+            gemfile: gemfiles/rails_edge.gemfile
+
+        include:
+          - ruby_version: '2.6'
+            gemfile: gemfiles/rails_51.gemfile
+          - ruby_version: '2.6'
+            gemfile: gemfiles/rails_50.gemfile
+
+    runs-on: ubuntu-18.04
+
+    env:
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby_version }}
+          bundler-cache: true
+          bundler: ${{ (contains(matrix.gemfile, 'rails_4') || contains(matrix.gemfile, 'rails_3')) && '1' || '2' }}
+        continue-on-error: ${{ (matrix.ruby_version == 'ruby-head') || (matrix.allow_failures == 'true') }}
+
+      - run: bundle exec rake
+        continue-on-error: ${{ (matrix.ruby_version == 'ruby-head') || contains(matrix.gemfile, 'rails_edge') || (matrix.allow_failures == 'true') }}
