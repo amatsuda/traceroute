@@ -6,34 +6,35 @@ jobs:
   build:
     strategy:
       matrix:
-        ruby_version: [ruby-head, '3.0', '2.7', '2.6']
-
-        gemfile:
-          - gemfiles/rails_edge.gemfile
-          - gemfiles/rails_61.gemfile
-          - gemfiles/rails_60.gemfile
-          - gemfiles/rails_52.gemfile
-
-        exclude:
-          - ruby_version: ruby-head
-            gemfile: gemfiles/rails_60.gemfile
-          - ruby_version: ruby-head
-            gemfile: gemfiles/rails_52.gemfile
-          - ruby_version: '3.0'
-            gemfile: gemfiles/rails_52.gemfile
-          - ruby_version: '2.6'
-            gemfile: gemfiles/rails_edge.gemfile
+        ruby_version: [ruby-head, '3.1', '3.0', '2.7']
+        rails_version: [edge, '7.0', '6.1']
 
         include:
           - ruby_version: '2.6'
-            gemfile: gemfiles/rails_51.gemfile
+            rails_version: '6.1'
+
+          - ruby_version: '3.0'
+            rails_version: '6.0'
+          - ruby_version: '2.7'
+            rails_version: '6.0'
           - ruby_version: '2.6'
-            gemfile: gemfiles/rails_50.gemfile
+            rails_version: '6.0'
+
+          - ruby_version: '2.7'
+            rails_version: '5.2'
+          - ruby_version: '2.6'
+            rails_version: '5.2'
+
+          - ruby_version: '2.6'
+            rails_version: '5.1'
+
+          - ruby_version: '2.6'
+            rails_version: '5.0'
 
     runs-on: ubuntu-18.04
 
     env:
-      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+      RAILS_VERSION: ${{ matrix.rails_version }}
 
     steps:
       - uses: actions/checkout@v2
@@ -42,8 +43,8 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby_version }}
           bundler-cache: true
-          bundler: ${{ (contains(matrix.gemfile, 'rails_4') || contains(matrix.gemfile, 'rails_3')) && '1' || '2' }}
+          bundler: ${{ (startsWith(matrix.rails_version, '4.') || startsWith(matrix.rails_version, '3.')) && '1' || '2' }}
         continue-on-error: ${{ (matrix.ruby_version == 'ruby-head') || (matrix.allow_failures == 'true') }}
 
       - run: bundle exec rake
-        continue-on-error: ${{ (matrix.ruby_version == 'ruby-head') || contains(matrix.gemfile, 'rails_edge') || (matrix.allow_failures == 'true') }}
+        continue-on-error: ${{ (matrix.ruby_version == 'ruby-head') || (matrix.rails_version == 'edge') || (matrix.allow_failures == 'true') }}
