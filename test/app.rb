@@ -13,9 +13,14 @@ module DummyApp
   end
 end
 
+module UsersHelper
+  def index_helper; end
+end
+
 class ApplicationController < ActionController::Base; end
 
 class UsersController < ApplicationController
+  include UsersHelper
   def index; end
   def index2; end
   def show; end

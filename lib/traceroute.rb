@@ -55,7 +55,8 @@ class Traceroute
   def defined_action_methods
     @defined_action_methods ||= [ActionController::Base, (ActionController::API if defined?(ActionController::API))].compact.map do |klass|
       klass.descendants.map do |controller|
-        controller.action_methods.reject {|a| (a =~ /\A(_conditional)?_callback_/) || (a == '_layout_from_proc')}.map do |action|
+        helpers = controller.included_modules.select{ |include| include.to_s[/Helper$/] }.map(&:public_instance_methods).flatten.to_set 
+        controller.action_methods.reject {|a| (a =~ /\A(_conditional)?_callback_/) || (a == '_layout_from_proc') || (helpers.include? a.to_sym)}.map do |action|
           "#{controller.controller_path}##{action}"
         end
       end.flatten
