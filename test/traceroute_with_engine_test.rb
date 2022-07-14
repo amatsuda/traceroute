@@ -66,6 +66,8 @@ module TracerouteWithEngineTest
     def setup
       TestEngine::Engine.routes.draw do
         resources :tasks, only: :index
+
+        root to: redirect(path: '/tasks')
       end
 
       Rails.application.routes_reloader.route_sets << DummyApp::Application.routes
