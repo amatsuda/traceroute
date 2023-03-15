@@ -18,9 +18,10 @@ class Traceroute
     @app = app
 
     @ignored_unreachable_actions = []
-    @ignored_unused_routes = [/^\/cable$/]
+    @ignored_unused_routes = default_unused_routes.dup
 
-    @ignored_unused_routes << %r{^#{@app.config.assets.prefix}} if @app.config.respond_to? :assets
+    @used_ignored_unreachable_actions = []
+    @used_ignored_unused_routes = []
 
     config_filename = %w(.traceroute.yaml .traceroute.yml .traceroute).detect {|f| File.exist?(f)}
     if config_filename && (config = YAML.load_file(config_filename))
@@ -52,6 +53,14 @@ class Traceroute
     defined_action_methods - routed_actions
   end
 
+  def unused_ignored_unused_routes
+    @ignored_unused_routes - @used_ignored_unused_routes - default_unused_routes
+  end
+
+  def unused_ignored_unreachable_action_methods
+    @ignored_unreachable_actions - @used_ignored_unreachable_actions
+  end
+
   def defined_action_methods
     @defined_action_methods ||= [ActionController::Base, (ActionController::API if defined?(ActionController::API))].compact.map do |klass|
       klass.descendants.map do |controller|
@@ -59,7 +68,7 @@ class Traceroute
           "#{controller.controller_path}##{action}"
         end
       end.flatten
-    end.flatten.reject {|r| @ignored_unreachable_actions.any? { |m| r.match(m) } }
+    end.compact.flatten.reject {|r| check_match_and_store_used(r, @ignored_unreachable_actions, @used_ignored_unreachable_actions) }
   end
 
   def routed_actions
@@ -73,7 +82,7 @@ class Traceroute
       else
         ((String === r.path) && r.path.to_s) || r.path.spec.to_s  # unknown routes
       end
-    end.compact.flatten.reject {|r| @ignored_unused_routes.any? { |m| r.match(m) } }
+    end.compact.flatten.reject { |r| check_match_and_store_used(r, @ignored_unused_routes, @used_ignored_unused_routes) }
   end
 
   def routes
@@ -97,5 +106,25 @@ class Traceroute
     routes.reject! {|r| r.app.is_a?(ActionDispatch::Routing::Redirect)}
 
     routes
+  end
+
+  private
+
+  def check_match_and_store_used(item, ignores, used)
+    ignores.any? { |m|
+      if item.match(m)
+        used << m
+        true
+      end
+    }
+  end
+
+  def default_unused_routes
+    @default_unused_routes ||=
+      begin
+        defaults = [/^\/cable$/]
+        defaults << %r{^#{@app.config.assets.prefix}} if @app.config.respond_to? :assets
+        defaults.freeze
+      end
   end
 end
