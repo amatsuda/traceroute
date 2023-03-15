@@ -32,7 +32,7 @@ module TracerouteWithEngineTest
     end
 
     def test_defined_action_methods
-      assert_defined_action_methods 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index', 'test_engine/tasks#index', 'users#index', 'users#index2', 'users#show'
+      assert_defined_action_methods 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index', 'test_engine/tasks#index', 'users#index', 'users#index2', 'users#custom_action', 'users#show'
     end
 
     def test_routed_actions
@@ -85,7 +85,7 @@ module TracerouteWithEngineTest
     end
 
     def test_defined_action_methods
-      assert_defined_action_methods 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index', 'test_engine/tasks#index', 'users#index', 'users#index2', 'users#show'
+      assert_defined_action_methods 'admin/shops#create', 'admin/shops#index', 'api/books#create', 'api/books#index', 'test_engine/tasks#index', 'users#index', 'users#index2', 'users#custom_action', 'users#show'
     end
 
     def test_routed_actions

@@ -19,19 +19,11 @@ class Traceroute
 
     @ignored_unreachable_actions = []
     @ignored_unused_routes = [/^\/cable$/]
+    @ignored_overridden_routes =[]
 
     @ignored_unused_routes << %r{^#{@app.config.assets.prefix}} if @app.config.respond_to? :assets
 
-    config_filename = %w(.traceroute.yaml .traceroute.yml .traceroute).detect {|f| File.exist?(f)}
-    if config_filename && (config = YAML.load_file(config_filename))
-      (config['ignore_unreachable_actions'] || []).each do |ignored_action|
-        @ignored_unreachable_actions << Regexp.new(ignored_action)
-      end
-
-      (config['ignore_unused_routes'] || []).each do |ignored_action|
-        @ignored_unused_routes << Regexp.new(ignored_action)
-      end
-    end
+    load_configs
   end
 
   def load_everything!
@@ -50,6 +42,18 @@ class Traceroute
 
   def unreachable_action_methods
     defined_action_methods - routed_actions
+  end
+
+  def overridden_routes
+    fetched_routes = routes
+    fake_params = Hash.new(1)
+
+    fetched_routes.each_with_object(Hash.new { |h, k| h[k] = [] })
+                  .with_index(1) do |(route1, result), route1_index|
+      fetched_routes.drop(route1_index).each do |route2|
+        result[route_info(route1)] << route_info(route2) if overrides?(route1, route2, fake_params)
+      end
+    end
   end
 
   def defined_action_methods
@@ -97,5 +101,36 @@ class Traceroute
     routes.reject! {|r| r.app.is_a?(ActionDispatch::Routing::Redirect)}
 
     routes
+  end
+
+  private
+
+  def load_configs
+    config_filename = %w(.traceroute.yaml .traceroute.yml .traceroute).detect {|f| File.exist?(f)}
+    if config_filename && (config = YAML.load_file(config_filename))
+      (config['ignore_unreachable_actions'] || []).each do |ignored_unreachable_action|
+        @ignored_unreachable_actions << Regexp.new(ignored_unreachable_action)
+      end
+
+      (config['ignore_unused_routes'] || []).each do |ignored_unused_route|
+        @ignored_unused_routes << Regexp.new(ignored_unused_route)
+      end
+
+      (config['ignore_overridden_routes'] || []).each do |ignored_overridden_route|
+        @ignored_overridden_routes << Regexp.new(ignored_overridden_route)
+      end
+    end
+  end
+
+  def overrides?(route1, route2, params)
+    return if route1.verb != route2.verb
+    return if route1.requirements == route2.requirements
+
+    route1.path.match(route2.format(params)) &&
+      @ignored_overridden_routes.all? { |ignored| !route2.path.spec.to_s.match(ignored) }
+  end
+
+  def route_info(route)
+    "#{route.verb} #{route.path.spec.to_s} #{route.requirements[:controller]}##{route.requirements[:action]}"
   end
 end
