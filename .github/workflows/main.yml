@@ -31,18 +31,19 @@ jobs:
           - ruby_version: '2.6'
             rails_version: '5.0'
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     env:
       RAILS_VERSION: ${{ matrix.rails_version }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby_version }}
           bundler-cache: true
+          rubygems: ${{ matrix.ruby_version < '2.6' && 'default' || 'latest' }}
           bundler: ${{ (startsWith(matrix.rails_version, '4.') || startsWith(matrix.rails_version, '3.')) && '1' || '2' }}
         continue-on-error: ${{ (matrix.ruby_version == 'ruby-head') || (matrix.allow_failures == 'true') }}
 
