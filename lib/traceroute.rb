@@ -23,18 +23,17 @@ class Traceroute
     @ignored_unused_routes << %r{^#{@app.config.assets.prefix}} if @app.config.respond_to? :assets
 
     config_filename = %w(.traceroute.yaml .traceroute.yml .traceroute).detect {|f| File.exist?(f)}
-    # Los if implementados dentro del loop es para limpiar ignored_action en caso de que se haya agregado una ruta completa al controlador
     if config_filename && (config = YAML.load_file(config_filename))
-      (config['ignore_unreachable_actions'] || []).each do |ignored_action|
-        ignored_action = ignored_action.split('/controllers/').last.gsub(/_controller\.rb/, '').gsub(/_controller/, '') if ignored_action.include?('/controllers/')
+      (config['ignore_unreachable_actions'] || []).each do |entry|
+        ignored_action = entry['action'] || entry['route']
         @ignored_unreachable_actions << Regexp.new(ignored_action)
       end
-
-      (config['ignore_unused_routes'] || []).each do |ignored_action|
-        ignored_action = ignored_action.split('/controllers/').last.gsub(/_controller\.rb/, '').gsub(/_controller/, '') if ignored_action.include?('/controllers/')
+    
+      (config['ignore_unused_routes'] || []).each do |entry|
+        ignored_action = entry['route'] || entry['action']
         @ignored_unused_routes << Regexp.new(ignored_action)
       end
-    end
+    end    
   end
 
   def load_everything!
